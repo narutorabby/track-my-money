@@ -8,6 +8,7 @@
 
         <title>Track My Money</title>
         @vite('resources/css/app.css')
+        @vite('resources/js/assets/styles/custom.scss')
     </head>
     <body class="antialiased">
         <div id="app"></div>
