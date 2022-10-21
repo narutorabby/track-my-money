@@ -4,6 +4,12 @@
             <div class="main-container">
                 <router-view></router-view>
             </div>
+            <n-divider />
+            <div class="footer">
+                <n-space justify="center">
+                    {{ new Date().getFullYear() }} — <strong>Track My Money</strong>
+                </n-space>
+            </div>
         </n-gi>
     </n-grid>
 </template>
@@ -19,3 +25,8 @@ export default {
     },
 };
 </script>
+<style lang="scss" scoped>
+.footer {
+    margin-bottom: 20px;
+}
+</style>

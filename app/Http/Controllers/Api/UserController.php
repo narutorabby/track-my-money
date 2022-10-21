@@ -4,11 +4,63 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Laravel\Socialite\Facades\Socialite;
+use Exception;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
     public function authenticate(Request $request)
     {
-        # code...
+        try {
+            $token = $request->token;
+            $userInfo = Socialite::driver('google')->stateless()->userFromToken($token);
+            if($userInfo == null) {
+                return errorResponse("Could not find this google account");
+            }
+
+            $existingUser = User::where('email', $userInfo->email)->first();
+            if($existingUser && $existingUser->role != "user"){
+                return errorResponse("Sorry! You cannot signin as user from this account");
+            }
+
+            $user = $this->findOrCreateUser($userInfo);
+            if($user == null) {
+                return errorResponse("Google signin failed. Try again!");
+            }
+            $token = $user->createToken('Personal Token')->plainTextToken;
+            $user->token = $token;
+            return successResponse("Signed in successfully", $user);
+        } catch (Exception $e) {
+            Log::info("Error", ['err' => $e]);
+            return errorResponse("Could not signin with Google");
+        }
+    }
+
+    private function findOrCreateUser($userInfo)
+    {
+        DB::beginTransaction();
+        try {
+            $user = null;
+            $googleUser = User::where('email', $userInfo->email)->where('google_id', $userInfo->id)->first();
+
+            if($googleUser){
+                $user = $googleUser;
+            }
+            else{
+                $user = new User();
+                $user->name = $userInfo->name ?? explode("@", $userInfo->email)[0];
+                $user->email = $userInfo->email;
+                $user->google_id = $userInfo->id;
+                $user->save();
+            }
+            DB::commit();
+            return $user;
+        } catch (Exception $e) {
+            DB::rollBack();
+            return null;
+        }
     }
 }

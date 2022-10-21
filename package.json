@@ -5,7 +5,7 @@
         "build": "vite build"
     },
     "devDependencies": {
-        "@vicons/fluent": "^0.12.0",
+        "@vicons/fa": "^0.12.0",
         "axios": "^0.27",
         "laravel-vite-plugin": "^0.6.0",
         "lodash": "^4.17.19",
@@ -21,6 +21,7 @@
         "vue": "^3.2.36",
         "vue-loader": "^17.0.0",
         "vue-router": "^4.1.5",
+        "vue3-google-login": "^2.0.12",
         "vuex": "^4.0.2"
     }
 }
