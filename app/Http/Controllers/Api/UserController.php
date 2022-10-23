@@ -63,4 +63,17 @@ class UserController extends Controller
     {
         return successResponse("User profile", $request->user());
     }
+
+    public function update(Request $request)
+    {
+        try {
+            $user = User::where('id', $request->user()->id)->first();
+            $user->name = $request->name;
+            $user->mobile = $request->mobile;
+            $user->avatar = $request->avatar;
+            return successResponse("User profile updated successfully", $user);
+        } catch (Exception $e) {
+            return errorResponse("Could not update user profile");
+        }
+    }
 }

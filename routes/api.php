@@ -19,6 +19,10 @@ use App\Http\Controllers\Api\RecordController;
 Route::post('authenticate', [UserController::class, 'authenticate']);
 
 Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('user/')->group(function () {
+        Route::get('me', [UserController::class, 'profile']);
+        Route::put('update', [UserController::class, 'update']);
+    });
     Route::prefix('record/')->group(function () {
         Route::get('list', [RecordController::class, 'list']);
         Route::get('details/{id}', [RecordController::class, 'show']);
