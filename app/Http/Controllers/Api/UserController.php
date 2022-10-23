@@ -58,4 +58,9 @@ class UserController extends Controller
             return null;
         }
     }
+
+    public function profile(Request $request)
+    {
+        return successResponse("User profile", $request->user());
+    }
 }

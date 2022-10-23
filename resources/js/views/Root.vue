@@ -97,6 +97,27 @@ export default {
                 key: "Account",
                 icon: renderIcon(UserCog),
             },
+            {
+                label: "User",
+                key: "User",
+                icon: renderIcon(UserCog),
+                children: [
+                {
+                    label: () => h(
+                        RouterLink,
+                        { to: { name: 'Account' } },
+                        { default: () => "Account" }
+                    ),
+                    key: "Account",
+                    icon: renderIcon(UserCog),
+                },
+                {
+                    label: 'Signout',
+                    key: 'Signout',
+                    icon: renderIcon(UserCog),
+                }
+                ]
+            },
         ]);
 
         const home = () => {
