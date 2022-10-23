@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->enum('type', ['Income', 'Expense', 'Contribution', 'Bill']);
             $table->double('amount', 15, 2);
-            $table->string('date');
+            $table->date('date');
             $table->string('title');
             $table->text('description')->nullable()->default(null);
             $table->integer('user_id')->nullable()->default(null);

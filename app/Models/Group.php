@@ -14,6 +14,16 @@ class Group extends Model
         'name', 'slug', 'created_by', 'updated_by'
     ];
 
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'group_id', 'id');
+    }
+
+    public function records()
+    {
+        return $this->hasMany(Record::class, 'group_id', 'id');
+    }
+
     public function admin()
     {
         return $this->belongsTo(User::class, 'created_by', 'id');

@@ -31,4 +31,9 @@ class User extends Authenticatable
     {
         return $this->records()->where('type', "Expense");
     }
+
+    public function members()
+    {
+        return $this->hasMany(Member::class, 'user_id', 'id');
+    }
 }
