@@ -3,32 +3,32 @@ import { createStore } from 'vuex';
 const store = createStore({
     state() {
         return {
-            sessionData: localStorage.getItem('sessionData') || "",
+            session: localStorage.getItem('session_id') ? window.atob(localStorage.getItem('session_id')) : null,
         }
     },
     getters: {
-        sessionData: (state) => {
-            return window.atob(state.sessionData);
+        session: (state) => {
+            return state.session;
         },
     },
 
     actions: {
-        setSessionData: (context, payload) => {
-            context.commit("setSessionData", payload);
+        setSession: (context, payload) => {
+            context.commit("setSession", payload);
         },
-        removeSessionData: context => {
-            context.commit("removeSessionData");
+        removeSession: context => {
+            context.commit("removeSession");
         },
     },
 
     mutations: {
-        setSessionData: (state, payload) => {
-            state.sessionData = window.btoa(payload);
-            localStorage.setItem('sessionData', window.btoa(payload));
+        setSession: (state, payload) => {
+            state.session = window.btoa(payload);
+            localStorage.setItem('session_id', window.btoa(state.session));
         },
-        removeSessionData: state => {
-            state.sessionData = "";
-            localStorage.removeItem('sessionData');
+        removeSession: state => {
+            state.session = null;
+            localStorage.removeItem('session_id');
         },
     },
 });

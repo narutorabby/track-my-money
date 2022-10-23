@@ -21,11 +21,6 @@ class UserController extends Controller
                 return errorResponse("Could not find this google account");
             }
 
-            $existingUser = User::where('email', $userInfo->email)->first();
-            if($existingUser && $existingUser->role != "user"){
-                return errorResponse("Sorry! You cannot signin as user from this account");
-            }
-
             $user = $this->findOrCreateUser($userInfo);
             if($user == null) {
                 return errorResponse("Google signin failed. Try again!");

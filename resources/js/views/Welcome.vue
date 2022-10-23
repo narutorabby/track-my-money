@@ -107,11 +107,14 @@
                 </n-gi>
             </n-grid>
         </div>
+        <n-divider />
     </section>
 </template>
 
 <script>
-import { ref, inject } from "vue";
+import { ref } from "vue";
+import { useStore } from "vuex";
+import { useRouter } from "vue-router";
 import { useMessage } from "naive-ui";
 import { Google } from '@vicons/fa'
 import { googleTokenLogin } from "vue3-google-login"
@@ -121,6 +124,8 @@ export default {
         Google
     },
     setup() {
+        const store = useStore();
+        const router = useRouter();
         const message = useMessage();
 
         const googleSigninLoading = ref(false);
@@ -154,23 +159,23 @@ export default {
         const googleSignin = () => {
             googleSigninLoading.value = true;
             googleTokenLogin().then((response) => {
-                console.log("response", response);
                 if(response && response.access_token) {
                     axios.post("/api/authenticate", {
                         token: response.access_token
                     })
                     .then((res) => {
-                        console.log("res", res);
                         if (res.data.response == "success") {
-                            // store.dispatch("setSessionData", res.data.data.token);
-                            // window.axios.defaults.headers.common['Authorization'] = "Bearer " + res.data.data.token;
-                            // window.axios.defaults.headers.common['Content-Type'] = 'application/json';
+                            store.dispatch("setSession", res.data.data.token);
+                            window.axios.defaults.headers.common['Authorization'] = "Bearer " + res.data.data.token;
+                            window.axios.defaults.headers.common['Content-Type'] = 'application/json';
+                            router.replace('/');
                         } else {
                             message.error(res.data.message);
                         }
                         googleSigninLoading.value = false;
                     })
                     .catch((err) => {
+                        console.log("err", err);
                         googleSigninLoading.value = false;
                         message.error("Could not signin with Google. Try again!");
                     });
@@ -237,7 +242,7 @@ export default {
     padding: 35px 40px;
 }
 .landing-bottom {
-    padding: 0 20px;
+    padding: 0 20px 30px 20px;
 
     .user-feedback {
         margin-bottom: 40px;
