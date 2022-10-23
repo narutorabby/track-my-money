@@ -2,21 +2,40 @@ import { createWebHistory, createRouter } from "vue-router";
 import store from '../store';
 
 const routes = [{
-    path: "/welcome",
-    name: "Welcome",
+    path: "/home",
+    name: "Home",
     component: () =>
-        import ('../views/Welcome.vue'),
+        import ('../views/Home.vue'),
 }, {
     path: '/',
     name: 'Root',
     component: () =>
         import ('../views/Root.vue'),
     children: [{
-        path: '/',
-        name: 'Dashboard',
-        component: () =>
-            import ('../views/Dashboard.vue'),
-    }]
+            path: '/',
+            name: 'Dashboard',
+            component: () =>
+                import ('../views/Dashboard.vue'),
+        },
+        {
+            path: '/personal',
+            name: 'Personal',
+            component: () =>
+                import ('../views/Personal.vue'),
+        },
+        {
+            path: '/group',
+            name: 'Group',
+            component: () =>
+                import ('../views/Group.vue'),
+        },
+        {
+            path: '/account',
+            name: 'Account',
+            component: () =>
+                import ('../views/Account.vue'),
+        },
+    ]
 }];
 
 const router = createRouter({
@@ -29,9 +48,9 @@ router.beforeEach((to, from, next) => {
     window.axios.defaults.headers.common['Authorization'] = sessionToken ? "Bearer " + sessionToken : "";
 
     if (sessionToken) {
-        to.name == 'Welcome' ? next('/') : next();
+        to.name == 'Home' ? next({ name: 'Dashboard' }) : next();
     } else {
-        to.name == 'Welcome' ? next() : next({ name: 'Welcome' });
+        to.name == 'Home' ? next() : next({ name: 'Home' });
     }
 });
 
