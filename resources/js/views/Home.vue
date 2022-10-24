@@ -27,20 +27,23 @@
         </div>
         <div class="get-started">
             <n-space justify="center">
-                <n-button
-                    class="google-button"
-                    size="large"
-                    type="info"
-                    @click="googleSignin"
-                    :loading="googleSigninLoading"
-                >
-                    <template #icon>
-                        <n-icon>
-                            <google />
-                        </n-icon>
-                    </template>
-                    Signin with Google
-                </n-button>
+                <n-card hoverable>
+                    <div class="text">Get started now!</div>
+                    <n-button
+                        class="google-button"
+                        size="large"
+                        type="info"
+                        @click="googleSignin"
+                        :loading="googleSigninLoading"
+                    >
+                        <template #icon>
+                            <n-icon>
+                                <google />
+                            </n-icon>
+                        </template>
+                        Signin with Google
+                    </n-button>
+                </n-card>
             </n-space>
         </div>
         <n-divider />
@@ -188,10 +191,9 @@ export default {
             console.log(formRef.value);
             formRef.value.validate((errors) => {
                 if (!errors) {
-                    message.success("Valid");
+                    message.success("Thanks for your valuable opinion!");
                 } else {
                     console.log(errors);
-                    message.error("Invalid");
                 }
             });
         };
@@ -235,8 +237,14 @@ export default {
 }
 .get-started {
     width: 100%;
-    top: calc(60vh - 35px);
+    top: calc(60vh - 60px);
     position: absolute;
+
+    .text {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
 }
 .google-button {
     padding: 35px 40px;

@@ -1,14 +1,19 @@
+import axios from 'axios';
 import { createStore } from 'vuex';
 
 const store = createStore({
     state() {
         return {
-            session: localStorage.getItem('session_id') ? window.atob(localStorage.getItem('session_id')) : null,
+            session: localStorage.getItem('UAT') ? localStorage.getItem('UAT') : null,
+            userData: null,
         }
     },
     getters: {
         session: (state) => {
             return state.session;
+        },
+        userData: (state) => {
+            return state.userData;
         },
     },
 
@@ -19,16 +24,29 @@ const store = createStore({
         removeSession: context => {
             context.commit("removeSession");
         },
+        setUserData: (context, payload) => {
+            axios.get('/api/user/me')
+                .then(res => {
+                    if (res.data.response == "success") {
+                        context.commit("setUserData", res.data.data);
+                    }
+                }).catch(err => {
+                    //
+                });
+        },
     },
 
     mutations: {
         setSession: (state, payload) => {
-            state.session = window.btoa(payload);
-            localStorage.setItem('session_id', window.btoa(state.session));
+            state.session = payload;
+            localStorage.setItem('UAT', payload);
         },
         removeSession: state => {
             state.session = null;
-            localStorage.removeItem('session_id');
+            localStorage.removeItem('UAT');
+        },
+        setUserData: (state, payload) => {
+            state.userData = payload;
         },
     },
 });

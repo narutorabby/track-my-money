@@ -51,9 +51,10 @@ class RecordController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
+            'title' => 'required', 'string', 'max:60',
             'amount' => 'required', 'numeric',
             'date' => 'required', 'string',
-            'title' => 'required', 'string', 'max:20',
+            'type' => 'required', 'in:Income,Expense,Contribution,Bill',
             'description' => 'nullable', 'string', 'max:500'
         ]);
         if ($validator->fails()) {

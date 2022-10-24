@@ -48,6 +48,9 @@ router.beforeEach((to, from, next) => {
     window.axios.defaults.headers.common['Authorization'] = sessionToken ? "Bearer " + sessionToken : "";
 
     if (sessionToken) {
+        if (store.getters.userData == null) {
+            store.dispatch("setUserData");
+        }
         to.name == 'Home' ? next({ name: 'Dashboard' }) : next();
     } else {
         to.name == 'Home' ? next() : next({ name: 'Home' });

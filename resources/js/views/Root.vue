@@ -18,7 +18,7 @@
                         v-model:value="activeKey"
                         :collapsed="collapsed"
                         :collapsed-width="64"
-                        :collapsed-icon-size="32"
+                        :collapsed-icon-size="28"
                         :options="menuOptions"
                         :accordion="true"
                     />
@@ -49,9 +49,13 @@ export default {
         const router = useRouter();
         const route = useRoute();
 
+        const userData = computed(() => {
+            return store.getters.userData || null;
+        });
+
         const currentRoute = computed(() => {
             return route.name;
-        })
+        });
 
         const activeKey = ref(currentRoute);
         const collapsed = ref(false);
@@ -89,16 +93,7 @@ export default {
                 icon: renderIcon(Users),
             },
             {
-                label: () => h(
-                    RouterLink,
-                    { to: { name: 'Account' } },
-                    { default: () => "Account" }
-                ),
-                key: "Account",
-                icon: renderIcon(UserCog),
-            },
-            {
-                label: "User",
+                label: () => userData.value ? userData.value.name : "User",
                 key: "User",
                 icon: renderIcon(UserCog),
                 children: [
@@ -125,6 +120,7 @@ export default {
         }
 
         return {
+            userData,
             currentRoute,
             activeKey,
             collapsed,
