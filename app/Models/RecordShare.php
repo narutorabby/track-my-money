@@ -6,21 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class GroupInvitation extends Model
+class RecordShare extends Model
 {
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'group_id', 'user_id', 'expires_at', 'status'
+        'user_id', 'record_id', 'share'
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
-    public function group()
+    public function record()
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Record::class, 'record_id', 'id');
     }
 }

@@ -3,8 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\MobileNotification;
 use Illuminate\Http\Request;
 use App\Models\Group;
+use App\Models\Invitation;
+use App\Models\Member;
+use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -38,6 +43,13 @@ class GroupController extends Controller
             $group->slug = Str::slug($group->title) . "-" . md5($request->user()->id) . "-" . round(microtime(true) * 1000);
             $group->created_by = $request->user()->id;
             $group->save();
+
+            $member = new Member();
+            $member->group_id = $group->id;
+            $member->user_id = $group->created_by;
+            $member->joined_at = Carbon::now();
+            $member->save();
+
             DB::commit();
             return successResponse("Group created successfully!");
         } catch (Exception $e) {

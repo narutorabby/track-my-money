@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\MobileNotification;
 use Illuminate\Http\Request;
 use App\Models\Group;
 use App\Models\Record;
+use App\Models\RecordShare;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class RecordController extends Controller
 {
@@ -47,6 +50,15 @@ class RecordController extends Controller
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'amount' => 'required', 'numeric',
+            'date' => 'required', 'string',
+            'title' => 'required', 'string', 'max:20',
+            'description' => 'nullable', 'string', 'max:500'
+        ]);
+        if ($validator->fails()) {
+            return warningResponse($validator->errors()->first());
+        }
         DB::beginTransaction();
         try {
             $record = new Record();
@@ -64,19 +76,35 @@ class RecordController extends Controller
             $record->created_by = $request->user()->id;
             $record->save();
 
-            // if($record->type == "Contribution" || $record->type == "Bill"){
-            //     $model = Group::find($record->group_id);
-            //     $title = "Group: " . $model->name;
-            //     $topic = $model->slug;
-            //     $body = "New " . strtolower($record->type) . " of amount " . $record->amount . " is created by " . auth()->guard('api')->user()->name;
+            if($record->type == "Contribution" || $record->type == "Bill") {
+                if($record->type == "Contribution"){
+                    $recordhare = new RecordShare();
+                    $recordhare->user_id = $request->member;
+                    $recordhare->record_id = $record->id;
+                    $recordhare->share = $record->amount;
+                    $recordhare->save();
+                }
+                else if($record->type == "Bill"){
+                    foreach ($request->members as $member) {
+                        $recordhare = new RecordShare();
+                        $recordhare->user_id = $member;
+                        $recordhare->record_id = $record->id;
+                        $recordhare->share = ($record->amount / count($request->members));
+                        $recordhare->save();
+                    }
+                }
+                $group = Group::find($record->group_id);
+                $title = "Group: " . $group->name;
+                $topic = $group->slug;
+                $body = "New " . strtolower($record->type) . " of amount " . $record->amount . " is created by " . $request->user()->name;
 
-            //     $data = [
-            //         'topic' => $topic,
-            //         'title' => $title,
-            //         'body' => $body
-            //     ];
-            //     SendMobileNotification::dispatch($data)->delay(now()->addSecond(10));
-            // }
+                $data = [
+                    'topic' => $topic,
+                    'title' => $title,
+                    'body' => $body
+                ];
+                MobileNotification::dispatch($data)->delay(now()->addSecond(10));
+            }
 
             DB::commit();
             return successResponse("Record created successfully!", $record);

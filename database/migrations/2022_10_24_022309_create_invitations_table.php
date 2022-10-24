@@ -13,12 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('members', function (Blueprint $table) {
+        Schema::create('invitations', function (Blueprint $table) {
             $table->id();
             $table->integer('group_id');
             $table->integer('user_id');
-            $table->date('joined_at');
-            $table->date('left_at')->nullable()->default(null);
+            $table->enum('status', ['Pending', 'Accepted', 'Declined', 'Canceled'])->default('Pending');
+            $table->integer('created_by')->nullable()->default(null);
+            $table->integer('updated_by')->nullable()->default(null);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('members');
+        Schema::dropIfExists('invitations');
     }
 };

@@ -13,11 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('group_invitations', function (Blueprint $table) {
+        Schema::create('record_shares', function (Blueprint $table) {
             $table->id();
-            $table->integer('group_id');
             $table->integer('user_id');
-            $table->enum('status', ['Pending', 'Accepted', 'Declined', 'Canceled'])->default('Pending');
+            $table->integer('record_id');
+            $table->double('share', 15, 2);
             $table->timestamps();
             $table->softDeletes();
         });
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('group_invitations');
+        Schema::dropIfExists('record_shares');
     }
 };

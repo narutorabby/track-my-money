@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\Api\GroupController;
+use App\Http\Controllers\Api\InvitationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,5 +38,15 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('create', [GroupController::class, 'store']);
         Route::put('update/{id}', [GroupController::class, 'update']);
         Route::delete('delete/{id}', [GroupController::class, 'delete']);
+        Route::post('invite', [GroupController::class, 'invite']);
+        Route::post('cancel', [GroupController::class, 'cancelInvitation']);
+        Route::post('decline', [GroupController::class, 'declineInvitation']);
+    });
+    Route::prefix('invitation/')->group(function () {
+        Route::get('list', [InvitationController::class, 'list']);
+        Route::post('invite', [InvitationController::class, 'invite']);
+        Route::post('accept', [InvitationController::class, 'acceptInvitation']);
+        Route::post('cancel', [InvitationController::class, 'cancelInvitation']);
+        Route::post('decline', [InvitationController::class, 'declineInvitation']);
     });
 });
