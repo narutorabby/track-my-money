@@ -30,34 +30,41 @@
                 </n-card>
                 <template v-if="pageLoading">
                     <n-skeleton height="50px" />
-                    <n-skeleton v-for="i in 8" :key="i" height="40px" round />
+                    <n-skeleton v-for="i in 8" :key="i" height="36px" />
                 </template>
                 <template v-else-if="records && records.total > 0">
-                    <n-table striped>
+                    <n-table size="large" striped>
                         <thead>
-                        <tr>
-                            <th>Abandon</th>
-                            <th>Abormal</th>
-                            <th>Abolish</th>
-                            <th>...</th>
-                        </tr>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Title</th>
+                                <th>#</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>放弃</td>
-                            <td>反常的</td>
-                            <td>彻底废除</td>
-                            <td>...</td>
-                        </tr>
-                        <tr>
-                            <td>...</td>
-                            <td>...</td>
-                            <td>...</td>
+                        <tr v-for="(record, index) in records.data" :key="index">
+                            <td>{{ record.date }}</td>
+                            <td>{{ record.type }}</td>
+                            <td>{{ record.amount }}</td>
+                            <td>{{ record.title }}</td>
                             <td>...</td>
                         </tr>
                         </tbody>
                     </n-table>
-                    <n-pagination v-model:page="currentPage" :page-count="100" />
+                    <n-space justify="end">
+                        <n-pagination
+                            :item-count="records.total"
+                            v-model:page="currentPage"
+                            v-model:page-size="currentPageSize"
+                            :page-sizes="[10, 20, 30, 40]"
+                            size="large"
+                            show-size-picker
+                            :on-update:page="(page) => { pageChanged(page)}"
+                            :on-update:page-size="(pageSize) => { currentPageSizeChanged(pageSize)}"
+                        />
+                    </n-space>
                 </template>
                 <template v-else>
                     <n-empty class="empty" size="huge" description="No personal records found">
@@ -220,9 +227,8 @@ export default {
         });
 
         // List filters
-        const firstPage = ref(0);
-        const currentPage = ref(0);
-        const perPage = ref(10);
+        const currentPage = ref(1);
+        const currentPageSize = ref(10);
 
         const recordTypes = ref([
             {
@@ -240,11 +246,13 @@ export default {
 
         const getRecords = () => {
             pageLoading.value = true;
-            axios.get('/api/record/list', {
+            axios.get('/api/record/personal', {
                 params: {
                     type: recordType.value,
                     date_from: dateFrom.value,
-                    date_to: dateTo.value
+                    date_to: dateTo.value,
+                    page_size: currentPageSize.value,
+                    page: currentPage.value,
                 }
             }).then(res => {
                 if (res.data.response == "success") {
@@ -257,6 +265,12 @@ export default {
             })
         };
         const getActiveFilters = () => {
+            if(route.query.page != null){
+                currentPage.value = parseInt(route.query.page);
+            }
+            if(route.query.page_size != null){
+                currentPageSize.value = parseInt(route.query.page_size);
+            }
             if(route.query.type != null){
                 recordType.value = route.query.type;
             }
@@ -269,6 +283,7 @@ export default {
             getRecords();
         };
         getActiveFilters();
+
         const getFilteredRecords = () => {
             pageLoading.value = true;
 
@@ -282,19 +297,23 @@ export default {
             if(dateTo.value) {
                 queryParams.date_to = dateTo.value;
             }
-            firstPage.value = 0;
-            currentPage.value = 0;
+            currentPage.value = 1;
+            currentPageSize.value = 10;
 
             router.replace({ name: 'Personal', query: { ...queryParams } });
             getRecords();
         };
-        const getPaginatedRecords = (event) => {
-            pageLoading.value = true;
-            firstPage.value = event.first;
-            currentPage.value = event.page;
 
-            let newPage = currentPage.value + 1;
-            router.replace({ name: 'TourList', query: Object.assign({}, route.query, { page: newPage }) });
+        const pageChanged = (page) => {
+            currentPage.value = page;
+            getPaginatedRecords();
+        };
+        const currentPageSizeChanged = (pageSize) => {
+            currentPageSize.value = pageSize;
+            getPaginatedRecords();
+        };
+        const getPaginatedRecords = () => {
+            router.replace({ name: 'Personal', query: Object.assign({}, route.query, { page: currentPage.value, page_size: currentPageSize.value }) });
             getRecords();
         };
 
@@ -348,9 +367,8 @@ export default {
             record,
             rules,
 
-            firstPage,
             currentPage,
-            perPage,
+            currentPageSize,
 
             recordTypes,
             recordType,
@@ -362,6 +380,8 @@ export default {
             getRecords,
             getActiveFilters,
             getFilteredRecords,
+            pageChanged,
+            currentPageSizeChanged,
             getPaginatedRecords,
 
             openModal,

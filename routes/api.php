@@ -26,7 +26,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('update', [UserController::class, 'update']);
     });
     Route::prefix('record/')->group(function () {
-        Route::get('list', [RecordController::class, 'index']);
+        Route::get('personal', [RecordController::class, 'personal']);
+        Route::get('group', [RecordController::class, 'group']);
         Route::get('details/{id}', [RecordController::class, 'show']);
         Route::post('create', [RecordController::class, 'store']);
         Route::put('update/{id}', [RecordController::class, 'update']);

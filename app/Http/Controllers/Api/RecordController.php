@@ -15,15 +15,29 @@ use Illuminate\Support\Facades\Validator;
 
 class RecordController extends Controller
 {
-    public function index(Request $request)
+    public function personal(Request $request)
+    {
+        $type = ($request->type == null || $request->type == "Any") ? ['Income', 'Expense'] : [$request->type];
+        $request->merge(["type" => $type]);
+        return $this->list($request);
+    }
+
+    public function group(Request $request)
+    {
+        $type = ($request->type == null || $request->type == "Any") ? ['Contribution', 'Bill'] : [$request->type];
+        $request->request->add(['type' => $type]);
+        return $this->list($request);
+    }
+
+    private function list(Request $request)
     {
         $slug = $request->slug;
         $type = $request->type;
         $date_from = $request->date_from;
         $date_to = $request->date_to;
-        $pagination = $request->pagination ?? 10;
+        $pagination = $request->page_size ?? 10;
 
-        $records = Record::where('type', $type)->orderBy("id", "DESC")->with('user', 'group', 'creator', 'editor');
+        $records = Record::whereIn('type', $type)->orderBy("id", "DESC")->with('user', 'group', 'creator', 'editor');
         if($slug){
             $group = Group::where('slug', $request->slug)->first();
             if($group == null) {
