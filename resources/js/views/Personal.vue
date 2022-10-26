@@ -1,11 +1,11 @@
 <template>
     <section id="personal">
-        <n-card title="PERSONAL">
+        <n-card title="PERSONAL RECORDS">
             <template #header-extra>
                 <n-button @click="openModal()">
                     <template #icon>
                         <n-icon>
-                        <plus />
+                            <plus />
                         </n-icon>
                     </template>
                     Create New
@@ -30,26 +30,55 @@
                 </n-card>
                 <template v-if="pageLoading">
                     <n-skeleton height="50px" />
-                    <n-skeleton v-for="i in 8" :key="i" height="36px" />
+                    <n-skeleton v-for="i in 10" :key="i" height="50px" />
                 </template>
                 <template v-else-if="records && records.total > 0">
-                    <n-table size="large" striped>
+                    <n-table striped>
                         <thead>
                             <tr>
+                                <th>#</th>
                                 <th>Date</th>
                                 <th>Type</th>
-                                <th>Amount</th>
+                                <th>Amount (bdt)</th>
                                 <th>Title</th>
-                                <th>#</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
                         <tr v-for="(record, index) in records.data" :key="index">
-                            <td>{{ record.date }}</td>
+                            <td>{{ index + 1 }}</td>
+                            <td>{{ formatDate(record.date) }}</td>
                             <td>{{ record.type }}</td>
-                            <td>{{ record.amount }}</td>
+                            <td>{{ record.amount.toLocaleString('en-BD') }}</td>
                             <td>{{ record.title }}</td>
-                            <td>...</td>
+                            <td style="text-align: end;">
+                                <n-button-group>
+                                    <n-button round @click="viewEditRecord(index, 'edit')">
+                                        <template #icon>
+                                            <n-icon>
+                                                <edit-regular />
+                                            </n-icon>
+                                        </template>
+                                        Edit
+                                    </n-button>
+                                    <n-button @click="viewEditRecord(index, 'view')">
+                                        <template #icon>
+                                            <n-icon>
+                                                <eye-regular />
+                                            </n-icon>
+                                        </template>
+                                        View
+                                    </n-button>
+                                    <n-button round @click="deleteRecord(record.id)">
+                                        <template #icon>
+                                            <n-icon>
+                                                <trash-alt-regular />
+                                            </n-icon>
+                                        </template>
+                                        Remove
+                                    </n-button>
+                                </n-button-group>
+                            </td>
                         </tr>
                         </tbody>
                     </n-table>
@@ -58,7 +87,7 @@
                             :item-count="records.total"
                             v-model:page="currentPage"
                             v-model:page-size="currentPageSize"
-                            :page-sizes="[10, 20, 30, 40]"
+                            :page-sizes="[10, 20, 50, 100]"
                             size="large"
                             show-size-picker
                             :on-update:page="(page) => { pageChanged(page)}"
@@ -82,10 +111,10 @@
                 </template>
             </n-space>
         </n-card>
-        <n-modal v-model:show="showModalRef" :mask-closable="false">
+        <n-modal v-model:show="showModalRef" :mask-closable="false" :auto-focus="false">
             <n-card
                 style="width: 600px"
-                title="Create record"
+                :title="viewFlag ? 'View record' : editFlag ? 'Edit record' : 'Create record'"
                 size="huge"
                 role="dialog"
                 aria-modal="true"
@@ -100,6 +129,7 @@
                                         placeholder="Input Title"
                                         maxlength="60"
                                         show-count
+                                        :readonly="viewFlag"
                                     />
                                 </n-form-item>
                             </n-gi>
@@ -112,6 +142,7 @@
                                         placeholder="Input Amount"
                                         :min="0"
                                         :precision="2"
+                                        :readonly="viewFlag"
                                     />
                                 </n-form-item>
                             </n-gi>
@@ -120,8 +151,8 @@
                                     <n-date-picker
                                         v-model:formatted-value="record.date"
                                         placeholder="Select a date"
-                                        value-format="dd-MM-yyyy"
                                         type="date"
+                                        :disabled="viewFlag"
                                     />
                                 </n-form-item>
                             </n-gi>
@@ -131,6 +162,7 @@
                                         v-model:value="record.type"
                                         placeholder="Select record type"
                                         :options="recordTypes"
+                                        :disabled="viewFlag"
                                     />
                                 </n-form-item>
                             </n-gi>
@@ -144,13 +176,14 @@
                                         type="textarea"
                                         maxlength="500"
                                         show-count
+                                        :readonly="viewFlag"
                                     />
                                 </n-form-item>
                             </n-gi>
                         </n-grid>
                         <n-space justify="end">
                             <n-button @click="closeModal">Cancel</n-button>
-                            <n-button type="primary" @click="submitForm" :loading="formSubmitLoading">Submit</n-button>
+                            <n-button type="primary" @click="submitForm" :loading="formSubmitLoading" v-if="!viewFlag">Submit</n-button>
                         </n-space>
                     </n-form>
                 </n-space>
@@ -163,29 +196,41 @@
 import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
-import { useMessage } from "naive-ui";
-import { Plus } from "@vicons/fa";
+import { useMessage, useDialog } from "naive-ui";
+import { Plus, EyeRegular, EditRegular, TrashAltRegular } from "@vicons/fa";
+import moment from 'moment';
 
 export default {
     components: {
-        Plus
+        Plus,
+        EyeRegular,
+        EditRegular,
+        TrashAltRegular,
     },
     setup: () => {
         const store = useStore();
         const router = useRouter();
         const route = useRoute();
         const message = useMessage();
+        const dialog = useDialog();
 
         const pageLoading = ref(true);
         const formSubmitLoading = ref(false);
         const records = ref([]);
         const record = ref({
+            id: 0,
             title: '',
             amount: 0,
             date: null,
             type: '',
             description: "",
         });
+        const viewFlag = ref(false);
+        const editFlag = ref(false);
+
+        const showModalRef = ref(false);
+        const formRef = ref(null);
+
         const rules = ref({
             title: {
                 required: true,
@@ -317,8 +362,6 @@ export default {
             getRecords();
         };
 
-        const showModalRef = ref(false);
-        const formRef = ref(null);
         const openModal = () => {
             showModalRef.value = true;
         };
@@ -327,7 +370,17 @@ export default {
             formRef.value.validate((errors) => {
                 if (!errors) {
                     formSubmitLoading.value = true;
-                    axios.post("/api/record/create", record.value)
+                    let url = "";
+                    let formData = {};
+                    if(editFlag.value) {
+                        formData = { ...record.value, _method: "PUT"};
+                        url = "/api/record/update/" + record.value.id;
+                    }
+                    else {
+                        formData = { ...record.value };
+                        url = "/api/record/create";
+                    }
+                    axios.post(url, formData)
                     .then((res) => {
                         if (res.data.response == "success") {
                             message.success(res.data.message);
@@ -340,7 +393,7 @@ export default {
                     })
                     .catch(() => {
                         formSubmitLoading.value = false;
-                        message.error("Could not create record!");
+                        message.error(`Could not ${editFlag.value ? 'edit' : 'create'} record!`);
                     });
                 } else {
                     console.log(errors);
@@ -349,6 +402,8 @@ export default {
         };
         const closeModal = () => {
             showModalRef.value = false;
+            viewFlag.value = false;
+            editFlag.value = false;
             record.value = {
                 title: '',
                 amount: 0,
@@ -357,25 +412,73 @@ export default {
                 description: "",
             };
         };
-        const viewDetails = (record) => {};
+        const viewEditRecord = (index, flag) => {
+            if(flag == "edit") {
+                editFlag.value = true;
+            }
+            else {
+                viewFlag.value = true;
+            }
+            let selectedRecord = records.value.data[index];
+            record.value = {
+                id: selectedRecord.id,
+                title: selectedRecord.title,
+                amount: selectedRecord.amount,
+                date: selectedRecord.date,
+                type: selectedRecord.type,
+                description: selectedRecord.description,
+            };
+            showModalRef.value = true;
+        };
+
+        const deleteRecord = (id) => {
+            const d = dialog.error({
+                title: "Remove record",
+                content: "Do you really want to remove this record?",
+                negativeText: "No",
+                positiveText: "Yes",
+                onPositiveClick: () => {
+                    d.loading = true;
+                    return new Promise((resolve) => {
+                        axios.delete("/api/record/delete/" + id)
+                        .then((res) => {
+                            if (res.data.response == "success") {
+                                message.success(res.data.message);
+                                getRecords();
+                            } else {
+                                message.error(res.data.message);
+                            }
+                        })
+                        .catch(() => {
+                            message.error("Could not delete record!");
+                        })
+                        .then(resolve);
+                    });
+                }
+            });
+        };
+
+        const formatDate = (rawDate) => {
+            return moment(rawDate).format("DD-MM-YYYY");
+        };
 
         return {
             pageLoading,
             formSubmitLoading,
             records,
-            formRef,
             record,
+            viewFlag,
+            editFlag,
+            showModalRef,
+            formRef,
             rules,
 
             currentPage,
             currentPageSize,
-
             recordTypes,
             recordType,
             dateFrom,
             dateTo,
-
-            showModalRef,
 
             getRecords,
             getActiveFilters,
@@ -385,10 +488,12 @@ export default {
             getPaginatedRecords,
 
             openModal,
+            viewEditRecord,
             submitForm,
             closeModal,
+            deleteRecord,
 
-            viewDetails,
+            formatDate,
         };
     },
 };

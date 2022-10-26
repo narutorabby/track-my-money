@@ -18,33 +18,11 @@ class RecordController extends Controller
     public function personal(Request $request)
     {
         $type = ($request->type == null || $request->type == "Any") ? ['Income', 'Expense'] : [$request->type];
-        $request->merge(["type" => $type]);
-        return $this->list($request);
-    }
-
-    public function group(Request $request)
-    {
-        $type = ($request->type == null || $request->type == "Any") ? ['Contribution', 'Bill'] : [$request->type];
-        $request->request->add(['type' => $type]);
-        return $this->list($request);
-    }
-
-    private function list(Request $request)
-    {
-        $slug = $request->slug;
-        $type = $request->type;
         $date_from = $request->date_from;
         $date_to = $request->date_to;
         $pagination = $request->page_size ?? 10;
 
-        $records = Record::whereIn('type', $type)->orderBy("id", "DESC")->with('user', 'group', 'creator', 'editor');
-        if($slug){
-            $group = Group::where('slug', $request->slug)->first();
-            if($group == null) {
-                return errorResponse("Group does not exists!");
-            }
-            $records = $records->where('group_id', $group->id);
-        }
+        $records = Record::where('user_id', $request->user()->id)->whereIn('type', $type)->orderBy("id", "DESC");
         if($date_from){
             $records = $records->whereDate('date', '>=', Carbon::parse($date_from));
         }
@@ -54,6 +32,26 @@ class RecordController extends Controller
 
         $records = $records->paginate($pagination);
         return successResponse("Personal records", $records);
+    }
+
+    public function group(Request $request)
+    {
+        $group_id = $request->group_id;
+        $type = ($request->type == null || $request->type == "Any") ? ['Contribution', 'Bill'] : [$request->type];
+        $date_from = $request->date_from;
+        $date_to = $request->date_to;
+        $pagination = $request->page_size ?? 10;
+
+        $records = Record::where('group_id', $group_id)->whereIn('type', $type)->orderBy("id", "DESC")->with('user');
+        if($date_from){
+            $records = $records->whereDate('date', '>=', Carbon::parse($date_from));
+        }
+        if($date_to){
+            $records = $records->whereDate('date', '>=', Carbon::parse($date_to));
+        }
+
+        $records = $records->paginate($pagination);
+        return successResponse("Group records", $records);
     }
 
     public function show($id)
