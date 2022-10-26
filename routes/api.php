@@ -28,14 +28,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('record/')->group(function () {
         Route::get('personal', [RecordController::class, 'personal']);
         Route::get('group', [RecordController::class, 'group']);
-        Route::get('details/{id}', [RecordController::class, 'show']);
+        Route::get('show/{id}', [RecordController::class, 'show']);
         Route::post('create', [RecordController::class, 'store']);
         Route::put('update/{id}', [RecordController::class, 'update']);
         Route::delete('delete/{id}', [RecordController::class, 'delete']);
     });
     Route::prefix('group/')->group(function () {
         Route::get('list', [GroupController::class, 'index']);
-        Route::get('details/{id}', [GroupController::class, 'show']);
+        Route::get('show/{slug}', [GroupController::class, 'show']);
         Route::post('create', [GroupController::class, 'store']);
         Route::put('update/{id}', [GroupController::class, 'update']);
         Route::delete('delete/{id}', [GroupController::class, 'delete']);

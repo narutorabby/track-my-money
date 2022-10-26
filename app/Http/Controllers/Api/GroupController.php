@@ -24,7 +24,7 @@ class GroupController extends Controller
 
     public function show($slug)
     {
-        $group = Group::where('slug', $slug)->first();
+        $group = Group::where('slug', $slug)->with('records', 'members', 'admin')->withCount(['members', 'records'])->first();
         if($group) {
             return successResponse("Group details", $group);
         }
@@ -57,14 +57,12 @@ class GroupController extends Controller
 
     public function update(Request $request, $id)
     {
-        return errorResponse("This feature is not available at this moment!");
         $group = Group::where('id', $id)->first();
         if($group == null) {
             return errorResponse("Group not found");
         }
         DB::beginTransaction();
         try {
-            $group = new Group();
             $group->name = $request->name;
             $group->updated_by = $request->user()->id;
             $group->save();

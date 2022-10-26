@@ -30,6 +30,12 @@ const routes = [{
                 import ('../views/Group.vue'),
         },
         {
+            path: '/group/details/:slug',
+            name: 'GroupDetails',
+            component: () =>
+                import ('../views/GroupDetails.vue'),
+        },
+        {
             path: '/account',
             name: 'Account',
             component: () =>
