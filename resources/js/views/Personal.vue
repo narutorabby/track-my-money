@@ -1,6 +1,7 @@
 <template>
     <section id="personal">
-        <n-card title="PERSONAL RECORDS">
+        <record-list />
+        <!-- <n-card title="PERSONAL RECORDS">
             <template #header-extra>
                 <n-button @click="openModal()">
                     <template #icon>
@@ -61,21 +62,13 @@
                                         </template>
                                         Edit
                                     </n-button>
-                                    <n-button @click="viewEditRecord(index, 'view')">
+                                    <n-button round @click="viewEditRecord(index, 'view')">
                                         <template #icon>
                                             <n-icon>
                                                 <eye-regular />
                                             </n-icon>
                                         </template>
                                         View
-                                    </n-button>
-                                    <n-button round @click="deleteRecord(record.id)">
-                                        <template #icon>
-                                            <n-icon>
-                                                <trash-alt-regular />
-                                            </n-icon>
-                                        </template>
-                                        Remove
                                     </n-button>
                                 </n-button-group>
                             </td>
@@ -113,7 +106,7 @@
         </n-card>
         <n-modal v-model:show="showModalRef" :mask-closable="false" :auto-focus="false">
             <create-edit-record :record="record" :editFlag="editFlag" :viewFlag="viewFlag" @close="closeModal" />
-        </n-modal>
+        </n-modal> -->
     </section>
 </template>
 
@@ -124,6 +117,7 @@ import { useMessage, useDialog } from "naive-ui";
 import { Plus, EyeRegular, EditRegular, TrashAltRegular } from "@vicons/fa";
 import moment from 'moment';
 import CreateEditRecord from '../components/CreateEditRecord.vue';
+import RecordList from '../components/RecordList.vue';
 
 export default {
     components: {
@@ -132,6 +126,7 @@ export default {
         EditRegular,
         TrashAltRegular,
         CreateEditRecord,
+        RecordList,
     },
     setup: () => {
         const router = useRouter();

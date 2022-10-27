@@ -16,7 +16,7 @@ class Group extends Model
 
     public function members()
     {
-        return $this->hasMany(Member::class, 'group_id', 'id');
+        return $this->belongsToMany(User::class, 'group_users')->withPivot('joined_at', 'left_at');
     }
 
     public function records()

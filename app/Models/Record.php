@@ -33,4 +33,9 @@ class Record extends Model
     {
         return $this->hasOne(User::class, 'id', 'updated_by');
     }
+
+    public function shares()
+    {
+        return $this->belongsToMany(User::class, 'record_shares');
+    }
 }

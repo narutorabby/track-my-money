@@ -48,8 +48,23 @@
                             <n-select
                                 v-model:value="record.type"
                                 placeholder="Select record type"
-                                :options="recordTypes"
+                                :options="groupId ? groupRecordTypes : personalRecordTypes"
                                 :disabled="viewFlag"
+                            />
+                        </n-form-item>
+                    </n-gi>
+                </n-grid>
+                <n-grid cols="1" v-if="groupId">
+                    <n-gi>
+                        <n-form-item label="Member(s)" path="members">
+                            <n-select
+                                v-model:value="record.members"
+                                placeholder="Select members(s)"
+                                :options="members"
+                                value-field="id"
+                                label-field="label"
+                                :disabled="viewFlag || (groupId && !record.type)"
+                                :multiple="record.type == 'Bill'"
                             />
                         </n-form-item>
                     </n-gi>
@@ -91,6 +106,7 @@ export default {
                 date: null,
                 type: '',
                 description: "",
+                members: [],
             }
         },
         editFlag: {
@@ -100,6 +116,14 @@ export default {
         viewFlag: {
             type: Boolean,
             default: false
+        },
+        groupId: {
+            type: Number,
+            default: null
+        },
+        members: {
+            type: Array,
+            default: []
         },
     },
     setup(props, { emit }) {
@@ -113,8 +137,10 @@ export default {
         const record = ref(props.record);
         const viewFlag = ref(props.viewFlag);
         const editFlag = ref(props.editFlag);
+        const groupId = ref(props.groupId);
+        const members = ref(props.members);
 
-        const recordTypes = ref([
+        const personalRecordTypes = ref([
             {
                 label: "Income",
                 value: "Income"
@@ -122,6 +148,17 @@ export default {
             {
                 label: "Expense",
                 value: "Expense"
+            },
+        ]);
+
+        const groupRecordTypes = ref([
+            {
+                label: "Contribution",
+                value: "Contribution"
+            },
+            {
+                label: "Bill",
+                value: "Bill"
             },
         ]);
 
@@ -156,7 +193,7 @@ export default {
             description: {
                 required: false,
                 validator(rule, value) {
-                    if (value.length > 500) {
+                    if (value && value.length > 500) {
                         return new Error("Description should be smaller than 500 characters");
                     }
                     return true;
@@ -178,6 +215,9 @@ export default {
                     else {
                         formData = { ...record.value };
                         url = "/api/record/create";
+                    }
+                    if(groupId.value) {
+                        formData.group_id = groupId.value;
                     }
                     axios.post(url, formData)
                     .then((res) => {
@@ -210,7 +250,10 @@ export default {
             record,
             viewFlag,
             editFlag,
-            recordTypes,
+            groupId,
+            members,
+            personalRecordTypes,
+            groupRecordTypes,
             rules,
 
             submitForm,

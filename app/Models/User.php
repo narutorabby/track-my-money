@@ -17,6 +17,11 @@ class User extends Authenticatable
         'name', 'email', 'mobile', 'google_id', 'avatar',
     ];
 
+    public function groups()
+    {
+        return $this->belongsToMany(Group::class, 'group_users');
+    }
+
     public function records()
     {
         return $this->hasMany(Record::class, 'user_id', 'id');
@@ -30,10 +35,5 @@ class User extends Authenticatable
     public function expenses()
     {
         return $this->records()->where('type', "Expense");
-    }
-
-    public function members()
-    {
-        return $this->hasMany(Member::class, 'user_id', 'id');
     }
 }

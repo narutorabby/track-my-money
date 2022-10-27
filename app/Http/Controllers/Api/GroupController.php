@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Group;
-use App\Models\Member;
+use App\Models\GroupUser;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -15,8 +15,8 @@ class GroupController extends Controller
 {
     public function index(Request $request)
     {
-        $groups = Group::whereHas('members', function($quesry) use($request) {
-            $quesry->user_id = $request->user()->id;
+        $groups = Group::whereHas('members', function($query) use($request) {
+            $query->user_id = $request->user()->id;
         })->with('admin')->withCount(['members', 'records'])->get();
 
         return successResponse("Group list", $groups);
@@ -24,7 +24,7 @@ class GroupController extends Controller
 
     public function show($slug)
     {
-        $group = Group::where('slug', $slug)->with('records', 'members', 'admin')->withCount(['members', 'records'])->first();
+        $group = Group::where('slug', $slug)->with('members:id,name,email,mobile', 'admin')->withCount(['members', 'records'])->first();
         if($group) {
             return successResponse("Group details", $group);
         }
@@ -41,11 +41,11 @@ class GroupController extends Controller
             $group->created_by = $request->user()->id;
             $group->save();
 
-            $member = new Member();
-            $member->group_id = $group->id;
-            $member->user_id = $group->created_by;
-            $member->joined_at = Carbon::now();
-            $member->save();
+            $groupUser = new GroupUser();
+            $groupUser->group_id = $group->id;
+            $groupUser->user_id = $group->created_by;
+            $groupUser->joined_at = Carbon::now();
+            $groupUser->save();
 
             DB::commit();
             return successResponse("Group created successfully!");

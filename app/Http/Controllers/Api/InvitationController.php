@@ -7,7 +7,7 @@ use App\Jobs\MobileNotification;
 use Illuminate\Http\Request;
 use App\Models\Group;
 use App\Models\Invitation;
-use App\Models\Member;
+use App\Models\GroupUser;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -47,7 +47,7 @@ class InvitationController extends Controller
             return errorResponse("User does not exist!");
         }
 
-        if(Member::where('group_id', $group->id)->where('user_id', $user->id)->first()){
+        if(GroupUser::where('group_id', $group->id)->where('user_id', $user->id)->first()){
             return errorResponse("This user is already a member of this group!");
         }
 
@@ -96,11 +96,11 @@ class InvitationController extends Controller
             $invitation->status = "Accepted";
             $invitation->save();
 
-            $member = new Member();
-            $member->group_id = $group->id;
-            $member->user_id = $request->user()->id;
-            $member->joined_at = Carbon::now();
-            $member->save();
+            $groupUser = new GroupUser();
+            $groupUser->group_id = $group->id;
+            $groupUser->user_id = $request->user()->id;
+            $groupUser->joined_at = Carbon::now();
+            $groupUser->save();
 
             DB::commit();
             return successResponse("Invitation accepted successfully!");

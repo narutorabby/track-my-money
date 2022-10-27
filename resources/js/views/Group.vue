@@ -35,6 +35,8 @@
                                 <th>Admin</th>
                                 <th>Total Members</th>
                                 <th>Total Records</th>
+                                <th>Created At</th>
+                                <th>Last Edited At</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -45,6 +47,8 @@
                             <td>{{ group.admin.name }}</td>
                             <td>{{ group.members_count }}</td>
                             <td>{{ group.records_count }}</td>
+                            <td>{{ formatDate(group.created_at) }}</td>
+                            <td>{{ formatDate(group.updated_at) }}</td>
                             <td style="text-align: end;">
                                 <n-button-group>
                                     <n-button round @click="editGroup(index, 'edit')">
@@ -55,13 +59,21 @@
                                         </template>
                                         Edit
                                     </n-button>
-                                    <n-button round @click="groupDetails(group.slug)">
+                                    <n-button round @click="groupMembers(group.slug)">
                                         <template #icon>
                                             <n-icon>
                                                 <eye-regular />
                                             </n-icon>
                                         </template>
-                                        Details
+                                        Members
+                                    </n-button>
+                                    <n-button round @click="groupRecords(group.slug)">
+                                        <template #icon>
+                                            <n-icon>
+                                                <eye-regular />
+                                            </n-icon>
+                                        </template>
+                                        Records
                                     </n-button>
                                 </n-button-group>
                             </td>
@@ -119,7 +131,7 @@
 </template>
 
 <script>
-import { ref, computed } from "vue";
+import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { useMessage } from "naive-ui";
@@ -137,10 +149,6 @@ export default {
         const router = useRouter();
         const route = useRoute();
         const message = useMessage();
-
-        const userData = computed(() => {
-            return store.getters.userData || null;
-        });
 
         const pageLoading = ref(true);
         const formSubmitLoading = ref(false);
@@ -270,8 +278,12 @@ export default {
             showModalRef.value = true;
         };
 
-        const groupDetails = (slug) => {
-            router.push({ name: 'GroupDetails', params: { slug: slug } });
+        const groupMembers = (slug) => {
+            router.push({ name: 'GroupMembers', params: { slug: slug } });
+        };
+
+        const groupRecords = (slug) => {
+            router.push({ name: 'GroupRecords', params: { slug: slug } });
         };
 
         const formatDate = (rawDate) => {
@@ -299,7 +311,8 @@ export default {
             submitForm,
             closeModal,
             editGroup,
-            groupDetails,
+            groupMembers,
+            groupRecords,
 
             formatDate,
         };

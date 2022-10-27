@@ -11,6 +11,7 @@ use App\Models\RecordShare;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class RecordController extends Controller
@@ -42,7 +43,7 @@ class RecordController extends Controller
         $date_to = $request->date_to;
         $pagination = $request->page_size ?? 10;
 
-        $records = Record::where('group_id', $group_id)->whereIn('type', $type)->orderBy("id", "DESC")->with('user');
+        $records = Record::where('group_id', $group_id)->whereIn('type', $type)->orderBy("id", "DESC")->with('user', 'shares:id,name,email');
         if($date_from){
             $records = $records->whereDate('date', '>=', Carbon::parse($date_from));
         }
@@ -56,7 +57,7 @@ class RecordController extends Controller
 
     public function show($id)
     {
-        $record = Record::where('id', $id)->with(['user', 'group'])->first();
+        $record = Record::where('id', $id)->with(['user', 'shares', 'group'])->first();
         return successResponse("Record details", $record);
     }
 
@@ -92,7 +93,7 @@ class RecordController extends Controller
             if($record->type == "Contribution" || $record->type == "Bill") {
                 if($record->type == "Contribution"){
                     $recordhare = new RecordShare();
-                    $recordhare->user_id = $request->member;
+                    $recordhare->user_id = $request->members;
                     $recordhare->record_id = $record->id;
                     $recordhare->share = $record->amount;
                     $recordhare->save();
@@ -122,6 +123,7 @@ class RecordController extends Controller
             DB::commit();
             return successResponse("Record created successfully!", $record);
         } catch (Exception $e) {
+            Log::info("Error", ['err' => $e]);
             DB::rollBack();
             return errorResponse("Could not create record!");
         }
@@ -144,6 +146,47 @@ class RecordController extends Controller
             $record->description = $request->description;
             $record->updated_by = $request->user()->id;
             $record->save();
+
+            if($record->type == "Contribution" || $record->type == "Bill") {
+                $recordhares = RecordShare::where('record_id', $record->id);
+                if($record->type == "Contribution"){
+                    $recordhare = $recordhares->first();
+                    $recordhare->user_id = $request->members;
+                    $recordhare->record_id = $record->id;
+                    $recordhare->share = $record->amount;
+                    $recordhare->save();
+                }
+                else if($record->type == "Bill"){
+                    $recordhares = $recordhares->pluck('user_id')->toArray();
+                    Log::info("Before", $recordhares);
+                    foreach ($request->members as $member) {
+                        if(in_array($member, $recordhares)) {
+                            $recordhare = RecordShare::where('record_id', $record->id)->where('user_id', $member)->first();
+                            $recordhares = array_diff($recordhares, [$member]);
+                        }
+                        else {
+                            $recordhare = new RecordShare();
+                            $recordhare->user_id = $member;
+                            $recordhare->record_id = $record->id;
+                        }
+                        $recordhare->share = ($record->amount / count($request->members));
+                        $recordhare->save();
+                    }
+                    Log::info("After", $recordhares);
+                    RecordShare::where('record_id', $record->id)->whereIn('user_id', $recordhares)->delete();
+                }
+                $group = Group::find($record->group_id);
+                $title = "Group: " . $group->name;
+                $topic = $group->slug;
+                $body = "New " . strtolower($record->type) . " of amount " . $record->amount . " is created by " . $request->user()->name;
+
+                $data = [
+                    'topic' => $topic,
+                    'title' => $title,
+                    'body' => $body
+                ];
+                MobileNotification::dispatch($data)->delay(now()->addSecond(10));
+            }
             DB::commit();
             return successResponse("Record updated successfully!", $record);
         } catch (Exception $e) {
@@ -154,6 +197,7 @@ class RecordController extends Controller
 
     public function delete(Request $request, $id)
     {
+        return errorResponse("This feature is not available at this moment!");
         DB::beginTransaction();
         try {
             $record = Record::where('id', $id)->with('group')->first();

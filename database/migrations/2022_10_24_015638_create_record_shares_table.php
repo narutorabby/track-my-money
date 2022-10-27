@@ -19,7 +19,6 @@ return new class extends Migration
             $table->integer('record_id');
             $table->double('share', 15, 2);
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 

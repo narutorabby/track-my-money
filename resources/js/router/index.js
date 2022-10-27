@@ -30,10 +30,16 @@ const routes = [{
                 import ('../views/Group.vue'),
         },
         {
-            path: '/group/details/:slug',
-            name: 'GroupDetails',
+            path: '/group/:slug/members',
+            name: 'GroupMembers',
             component: () =>
-                import ('../views/GroupDetails.vue'),
+                import ('../views/group/Members.vue'),
+        },
+        {
+            path: '/group/:slug/records',
+            name: 'GroupRecords',
+            component: () =>
+                import ('../views/group/Records.vue'),
         },
         {
             path: '/account',
