@@ -85,7 +85,14 @@
                 </n-grid>
                 <n-space justify="end">
                     <n-button @click="close">Cancel</n-button>
-                    <n-button type="primary" @click="submitForm" :loading="formSubmitLoading" v-if="!viewFlag">Submit</n-button>
+                    <n-button type="primary" @click="submitForm" :loading="formSubmitLoading" v-if="!viewFlag">
+                        <template #icon>
+                            <n-icon>
+                                <check />
+                            </n-icon>
+                        </template>
+                        {{ editFlag ? 'Save' : 'Create' }}
+                    </n-button>
                 </n-space>
             </n-form>
         </n-space>
@@ -95,7 +102,11 @@
 import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useMessage } from "naive-ui";
+import { Check } from "@vicons/fa";
 export default {
+    components: {
+        Check,
+    },
     props: {
         record: {
             type: Object,

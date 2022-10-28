@@ -121,7 +121,14 @@
                         </n-grid>
                         <n-space justify="end">
                             <n-button @click="closeModal">Cancel</n-button>
-                            <n-button type="primary" @click="submitForm" :loading="formSubmitLoading">Submit</n-button>
+                            <n-button type="primary" @click="submitForm" :loading="formSubmitLoading">
+                                <template #icon>
+                                    <n-icon>
+                                        <check />
+                                    </n-icon>
+                                </template>
+                                {{ editFlag ? 'Save' : 'Create' }}
+                            </n-button>
                         </n-space>
                     </n-form>
                 </n-space>
@@ -135,7 +142,7 @@ import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { useMessage } from "naive-ui";
-import { Plus, EyeRegular, EditRegular } from "@vicons/fa";
+import { Plus, EyeRegular, EditRegular, Check } from "@vicons/fa";
 import moment from 'moment';
 
 export default {
@@ -143,6 +150,7 @@ export default {
         Plus,
         EyeRegular,
         EditRegular,
+        Check,
     },
     setup: () => {
         const store = useStore();

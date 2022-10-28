@@ -14,9 +14,14 @@ class Group extends Model
         'name', 'slug', 'created_by', 'updated_by'
     ];
 
+    public function group_users()
+    {
+        return $this->hasMany(GroupUser::class);
+    }
+
     public function members()
     {
-        return $this->belongsToMany(User::class, 'group_users')->withPivot('joined_at', 'left_at');
+        return $this->belongsToMany(User::class, 'group_users')->withPivot('joined_at');
     }
 
     public function records()

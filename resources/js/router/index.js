@@ -42,6 +42,12 @@ const routes = [{
                 import ('../views/group/Records.vue'),
         },
         {
+            path: '/invitation',
+            name: 'Invitation',
+            component: () =>
+                import ('../views/Invitation.vue'),
+        },
+        {
             path: '/account',
             name: 'Account',
             component: () =>

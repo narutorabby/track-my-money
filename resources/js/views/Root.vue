@@ -41,7 +41,7 @@ import { ref, computed, h } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute, RouterLink } from "vue-router";
 import { NIcon } from "naive-ui";
-import { HouseUser, UserTie, Users, UserCog } from "@vicons/fa";
+import { HouseUser, UserTie, Users, Envelope, UserCog } from "@vicons/fa";
 
 export default {
     setup() {
@@ -91,6 +91,15 @@ export default {
                 ),
                 key: "Group",
                 icon: renderIcon(Users),
+            },
+            {
+                label: () => h(
+                    RouterLink,
+                    { to: { name: 'Invitation' } },
+                    { default: () => "Invitation" }
+                ),
+                key: "Invitation",
+                icon: renderIcon(Envelope),
             },
             {
                 label: () => userData.value ? userData.value.name : "User",

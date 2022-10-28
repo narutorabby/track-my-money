@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\InvitationController;
+use App\Http\Controllers\Api\MemberController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,8 +47,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('invitation/')->group(function () {
         Route::get('list', [InvitationController::class, 'list']);
         Route::post('invite', [InvitationController::class, 'invite']);
-        Route::post('accept', [InvitationController::class, 'acceptInvitation']);
-        Route::post('cancel', [InvitationController::class, 'cancelInvitation']);
-        Route::post('decline', [InvitationController::class, 'declineInvitation']);
+        Route::post('invitation-action/{id}', [InvitationController::class, 'invitationAction']);
+    });
+    Route::prefix('member/')->group(function () {
+        Route::get('list', [MemberController::class, 'list']);
     });
 });

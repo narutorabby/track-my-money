@@ -15,8 +15,8 @@ class GroupController extends Controller
 {
     public function index(Request $request)
     {
-        $groups = Group::whereHas('members', function($query) use($request) {
-            $query->user_id = $request->user()->id;
+        $groups = Group::whereHas('group_users', function($query) use($request) {
+            return $query->where('user_id', $request->user()->id);
         })->with('admin')->withCount(['members', 'records'])->get();
 
         return successResponse("Group list", $groups);

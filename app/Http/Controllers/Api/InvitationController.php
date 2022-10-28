@@ -17,19 +17,22 @@ class InvitationController extends Controller
 {
     public function list(Request $request)
     {
-        $status = $request->status ?? null;
-        $group_id = $request->group_id ?? null;
+        $type = $request->type ?? null;
         $invitations = Invitation::with('group', 'user');
-        if($group_id) {
-            $invitations = $invitations->where('group_id', $group_id);
+        if($type == "sent") {
+            $groupIds = Group::where('created_by', $request->user()->id)->pluck('id')->toArray();
+            $invitations = $invitations->whereIn('group_id', $groupIds);
         }
-        else {
+        else if($type == "received") {
             $invitations = $invitations->where('user_id', $request->user()->id);
         }
-        if($status != null && $status != "Any") {
-            $invitations = $invitations->where('status', $status);
+        else {
+            $groupIds = Group::where('created_by', $request->user()->id)->pluck('id')->toArray();
+            $invitations = $invitations->where(function ($query) use($groupIds, $request) {
+                return $query->whereIn('group_id', $groupIds)->orWhere('user_id', $request->user()->id);
+            });
         }
-        $invitations = $invitations->get();
+        $invitations = $invitations->orderBy('id', "DESC")->get();
         return successResponse("Invitations", $invitations);
     }
 
@@ -77,71 +80,52 @@ class InvitationController extends Controller
         }
     }
 
-    public function acceptInvitation(Request $request, $id)
+    public function invitationAction(Request $request, $id)
     {
+        $status = $request->status;
+        if($status != "Accepted" && $status != "Declined" && $status != "Canceled") {
+            return errorResponse("Wrong invitation action");
+        }
         $invitation = Invitation::where('id', $id)->where('status', "Pending")->first();
         if($invitation == null) {
             return errorResponse("Invitation not found");
         }
-        if($invitation->user_id != $request->user()->id) {
-            return errorResponse("You do not have permission to accept this invitation");
+        if($status == "Declined" || $status == "Accepted") {
+            if($invitation->user_id != $request->user()->id) {
+                return errorResponse("You do not have permission to accept/decline this invitation!");
+            }
+            if($status == "Accepted") {
+                $group = Group::find($invitation->group_id);
+                if($group == null) {
+                    return errorResponse("Correxponding group does not exists!");
+                }
+            }
         }
-        $group = Group::find($invitation->group_id);
-        if($group == null) {
-            return errorResponse("Correxponding group does not exists!");
+        else if($status == "Canceled" && $invitation->created_by != $request->user()->id) {
+            return errorResponse("You do not have permission to cancel this invitation");
         }
 
         DB::beginTransaction();
         try {
-            $invitation->status = "Accepted";
-            $invitation->save();
-
-            $groupUser = new GroupUser();
-            $groupUser->group_id = $group->id;
-            $groupUser->user_id = $request->user()->id;
-            $groupUser->joined_at = Carbon::now();
-            $groupUser->save();
-
-            DB::commit();
-            return successResponse("Invitation accepted successfully!");
-        } catch (Exception $e) {
-            DB::rollBack();
-            return errorResponse("Invitation could not be accepted!");
-        }
-    }
-
-    public function declineInvitation(Request $request, $id)
-    {
-        $invitation = Invitation::where('id', $id)->where('status', "Pending")->first();
-        if($invitation == null) {
-            return errorResponse("Invitation not found");
-        }
-        if($invitation->user_id != $request->user()->id) {
-            return errorResponse("You do not have permission to decline this invitation");
-        }
-        return $this->takeAction($invitation, "Declined");
-    }
-
-    public function cancelInvitation(Request $request, $id)
-    {
-        $invitation = Invitation::where('id', $id)->where('status', "Pending")->first();
-        if($invitation == null) {
-            return errorResponse("Invitation not found");
-        }
-        if($invitation->created_by != $request->user()->id) {
-            return errorResponse("You do not have permission to cancel this invitation");
-        }
-        return $this->takeAction($invitation, "Canceled");
-    }
-
-    private function takeAction(Invitation $invitation, $status)
-    {
-        try {
             $invitation->status = $status;
             $invitation->save();
+
+            if($status == "Accepted") {
+                if(GroupUser::where('group_id', $invitation->group_id)->where('user_id', $invitation->user_id)->exists()) {
+                    return errorResponse("You are already a member of this group");
+                }
+                $groupUser = new GroupUser();
+                $groupUser->group_id = $group->id;
+                $groupUser->user_id = $request->user()->id;
+                $groupUser->joined_at = Carbon::now();
+                $groupUser->save();
+            }
+
+            DB::commit();
             return successResponse("Invitation " . strtolower($status) . " successfully!");
 
         } catch (Exception $e) {
+            DB::rollBack();
             return errorResponse("Invitation could not be " . strtolower($status) . "!");
         }
     }
