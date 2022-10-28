@@ -21,9 +21,6 @@ const store = createStore({
         setSession: (context, payload) => {
             context.commit("setSession", payload);
         },
-        removeSession: context => {
-            context.commit("removeSession");
-        },
         setUserData: (context, payload) => {
             axios.get('/api/user/me')
                 .then(res => {
@@ -34,6 +31,9 @@ const store = createStore({
                     //
                 });
         },
+        removeSession: context => {
+            context.commit("removeSession");
+        },
     },
 
     mutations: {
@@ -41,12 +41,13 @@ const store = createStore({
             state.session = payload;
             localStorage.setItem('UAT', payload);
         },
-        removeSession: state => {
-            state.session = null;
-            localStorage.removeItem('UAT');
-        },
         setUserData: (state, payload) => {
             state.userData = payload;
+        },
+        removeSession: state => {
+            state.session = null;
+            state.userData = null;
+            localStorage.removeItem('UAT');
         },
     },
 });

@@ -71,9 +71,10 @@ class UserController extends Controller
             $user->name = $request->name;
             $user->mobile = $request->mobile;
             $user->avatar = $request->avatar;
-            return successResponse("User profile updated successfully", $user);
+            $user->save();
+            return successResponse("Profile updated successfully", $user);
         } catch (Exception $e) {
-            return errorResponse("Could not update user profile");
+            return errorResponse("Could not update profile");
         }
     }
 }

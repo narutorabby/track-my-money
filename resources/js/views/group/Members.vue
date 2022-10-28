@@ -2,15 +2,15 @@
     <section id="group-members">
         <n-card title="GROUP MEMBERS">
             <template #header-extra>
-            <n-button @click="openModal()">
-                <template #icon>
-                    <n-icon>
-                        <envelope-regular />
-                    </n-icon>
-                </template>
-                Invite New Member
-            </n-button>
-        </template>
+                <n-button @click="openModal()">
+                    <template #icon>
+                        <n-icon>
+                            <envelope-regular />
+                        </n-icon>
+                    </template>
+                    Invite New Member
+                </n-button>
+            </template>
             <n-space class="data-container" vertical>
                 <template v-if="pageLoading">
                     <n-skeleton height="50px" />
@@ -34,7 +34,7 @@
                             <td>{{ index + 1 }}</td>
                             <td>{{ member.user.name }}</td>
                             <td>{{ member.user.email }}</td>
-                            <td>{{ member.user.mobile || '-' }}</td>
+                            <td>{{ member.user.mobile ? member.user.mobile.substring(4) : '-' }}</td>
                             <td>{{ member.total_contribution.toLocaleString('en-BD') }}</td>
                             <td>{{ member.total_bill.toLocaleString('en-BD') }}</td>
                             <td>{{ formatDate(member.joined_at) }}</td>

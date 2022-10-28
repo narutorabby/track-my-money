@@ -48,10 +48,10 @@ const routes = [{
                 import ('../views/Invitation.vue'),
         },
         {
-            path: '/account',
-            name: 'Account',
+            path: '/profile',
+            name: 'Profile',
             component: () =>
-                import ('../views/Account.vue'),
+                import ('../views/Profile.vue'),
         },
     ]
 }];
