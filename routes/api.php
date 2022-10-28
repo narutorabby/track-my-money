@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RecordController;
 use App\Http\Controllers\Api\GroupController;
@@ -25,6 +26,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('user/')->group(function () {
         Route::get('me', [UserController::class, 'profile']);
         Route::put('update', [UserController::class, 'update']);
+    });
+    Route::prefix('dashboard/')->group(function () {
+        Route::get('daily-income-expense', [DashboardController::class, 'dailyIncomeExpense']);
+        Route::get('largest-expense', [DashboardController::class, 'largestExpense']);
+        Route::get('group-expense', [DashboardController::class, 'groupExpense']);
+        Route::get('monthly-income-expense', [DashboardController::class, 'monthlyIncomeExpense']);
     });
     Route::prefix('record/')->group(function () {
         Route::get('personal', [RecordController::class, 'personal']);

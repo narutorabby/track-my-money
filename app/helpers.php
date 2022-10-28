@@ -29,3 +29,10 @@ if(!function_exists("warningResponse")){
         ], $errCode, [], JSON_NUMERIC_CHECK);
     }
 }
+
+if(!function_exists("getChartColor")){
+    function getChartColor()
+    {
+        return '#' . str_pad(dechex(rand(0x111111, 0xEEEEEE)), 6, 0, STR_PAD_LEFT) . 'AA';
+    }
+}
