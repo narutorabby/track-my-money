@@ -24,7 +24,7 @@ class GroupController extends Controller
 
     public function show($slug)
     {
-        $group = Group::where('slug', $slug)->with('members:id,name,email,mobile', 'admin')->withCount(['members', 'records'])->first();
+        $group = Group::where('slug', $slug)->with('members:id,name,email,mobile,avatar', 'admin')->withCount(['members', 'records'])->first();
         if($group) {
             return successResponse("Group details", $group);
         }

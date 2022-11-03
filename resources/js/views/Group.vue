@@ -12,16 +12,6 @@
                 </n-button>
             </template>
             <n-space class="data-container" vertical>
-                <n-card name="List filters" hoverable>
-                    <n-grid x-gap="24" y-gap="12" cols="1 m:4" responsive="screen">
-                        <n-gi>
-                            <n-select placeholder="Select group type" size="large" v-model:value="groupType" :options="groupTypes" clearable />
-                        </n-gi>
-                        <n-gi>
-                            <n-button @click="getFilteredGroups">Submit</n-button>
-                        </n-gi>
-                    </n-grid>
-                </n-card>
                 <template v-if="pageLoading">
                     <n-skeleton height="50px" />
                     <n-skeleton v-for="i in 10" :key="i" height="50px" />
@@ -178,27 +168,9 @@ export default {
             }
         });
 
-        // List filters
-
-        const groupTypes = ref([
-            {
-                label: "Admin",
-                value: "admin"
-            },
-            {
-                label: "Member",
-                value: "member"
-            },
-        ]);
-        const groupType = ref(null);
-
         const getGroups = () => {
             pageLoading.value = true;
-            axios.get('/api/group/list', {
-                params: {
-                    type: groupType.value,
-                }
-            }).then(res => {
+            axios.get('/api/group/list').then(res => {
                 if (res.data.response == "success") {
                     groups.value = res.data.data;
                 }
@@ -208,25 +180,7 @@ export default {
                 pageLoading.value = false;
             })
         };
-        const getActiveFilters = () => {
-            if(route.query.type != null){
-                groupType.value = route.query.type;
-            }
-            getGroups();
-        };
-        getActiveFilters();
-
-        const getFilteredGroups = () => {
-            pageLoading.value = true;
-
-            let queryParams = {};
-            if(groupType.value) {
-                queryParams.type = groupType.value;
-            }
-
-            router.replace({ name: 'Group', query: { ...queryParams } });
-            getGroups();
-        };
+        getGroups();
 
         const openModal = () => {
             showModalRef.value = true;
@@ -239,7 +193,7 @@ export default {
                     let url = "";
                     let formData = {};
                     if(editFlag.value) {
-                        formData = { ...group.value, _method: "PUT"};
+                        formData = { ...group.value };
                         url = "/api/group/update/" + group.value.id;
                     }
                     else {
@@ -308,12 +262,7 @@ export default {
             formRef,
             rules,
 
-            groupTypes,
-            groupType,
-
             getGroups,
-            getActiveFilters,
-            getFilteredGroups,
 
             openModal,
             submitForm,

@@ -25,7 +25,7 @@ Route::post('authenticate', [UserController::class, 'authenticate']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('user/')->group(function () {
         Route::get('me', [UserController::class, 'profile']);
-        Route::put('update', [UserController::class, 'update']);
+        Route::post('update', [UserController::class, 'update']);
     });
     Route::prefix('dashboard/')->group(function () {
         Route::get('daily-income-expense', [DashboardController::class, 'dailyIncomeExpense']);
@@ -38,14 +38,14 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('group', [RecordController::class, 'group']);
         Route::get('show/{id}', [RecordController::class, 'show']);
         Route::post('create', [RecordController::class, 'store']);
-        Route::put('update/{id}', [RecordController::class, 'update']);
+        Route::post('update/{id}', [RecordController::class, 'update']);
         Route::delete('delete/{id}', [RecordController::class, 'delete']);
     });
     Route::prefix('group/')->group(function () {
         Route::get('list', [GroupController::class, 'index']);
         Route::get('show/{slug}', [GroupController::class, 'show']);
         Route::post('create', [GroupController::class, 'store']);
-        Route::put('update/{id}', [GroupController::class, 'update']);
+        Route::post('update/{id}', [GroupController::class, 'update']);
         Route::delete('delete/{id}', [GroupController::class, 'delete']);
         Route::post('invite', [GroupController::class, 'invite']);
         Route::post('cancel', [GroupController::class, 'cancelInvitation']);

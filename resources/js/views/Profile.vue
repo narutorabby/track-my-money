@@ -196,7 +196,6 @@ export default {
                         name: profile.value.name,
                         mobile: 'mob:' + profile.value.mobile,
                         avatar: profile.value.avatar,
-                        _method: "PUT"
                     })
                     .then((res) => {
                         if (res.data.response == "success") {

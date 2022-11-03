@@ -38,7 +38,7 @@
                             <th>#</th>
                             <th>Date</th>
                             <th>Type</th>
-                            <th>Amount (bdt)</th>
+                            <th>Amount</th>
                             <th>Title</th>
                             <th></th>
                         </tr>
@@ -196,9 +196,6 @@ export default {
             axios.get('/api/group/show/' + route.params.slug).then(res => {
                 if (res.data.response == "success") {
                     group.value = res.data.data;
-                    group.value.members.forEach(element => {
-                        element.label = element.name + ' (' + element.email + ')'
-                    });
                     getActiveFilters();
                 }
                 else{

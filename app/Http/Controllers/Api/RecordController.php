@@ -23,7 +23,7 @@ class RecordController extends Controller
         $date_to = $request->date_to;
         $pagination = $request->page_size ?? 10;
 
-        $records = Record::where('user_id', $request->user()->id)->whereIn('type', $type)->orderBy("id", "DESC");
+        $records = Record::where('user_id', $request->user()->id)->whereIn('type', $type)->orderBy("id", "DESC")->with('user', 'shares:id,name,email');
         if($date_from){
             $records = $records->whereDate('date', '>=', Carbon::parse($date_from));
         }

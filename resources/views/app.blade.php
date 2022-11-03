@@ -6,7 +6,7 @@
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <script>window.Laravel = { csrfToken: '{{ csrf_token() }}'};</script>
 
-        <title>Track My Money | The most useful personal income-expense tracker</title>
+        <title>Track My Money | The most useful income-expense tracker</title>
         @vite('resources/css/app.css')
         @vite('resources/js/assets/styles/custom.scss')
     </head>

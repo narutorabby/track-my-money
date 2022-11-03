@@ -62,7 +62,7 @@
                                 placeholder="Select members(s)"
                                 :options="members"
                                 value-field="id"
-                                label-field="label"
+                                label-field="name"
                                 :disabled="viewFlag || (groupId && !record.type)"
                                 :multiple="record.type == 'Bill'"
                             />
@@ -220,7 +220,7 @@ export default {
                     let url = "";
                     let formData = {};
                     if(editFlag.value) {
-                        formData = { ...record.value, _method: "PUT"};
+                        formData = { ...record.value };
                         url = "/api/record/update/" + record.value.id;
                     }
                     else {

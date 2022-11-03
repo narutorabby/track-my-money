@@ -41,7 +41,7 @@
                                 <google />
                             </n-icon>
                         </template>
-                        Signin with Google
+                        Continue with Google
                     </n-button>
                 </n-card>
             </n-space>
@@ -88,15 +88,19 @@
                             <template #label>
                                 <strong>Track My Money</strong>
                             </template>
-                            Track My Money is an easy-to-use daily income, expanse and debt tracker application for everyone. It can be used for both an individual personal and/or a group of people. And it's totally free of cost.
+                            Track My Money is an easy-to-use daily income, expanse and debt tracker mobile app for everyone. It can be used for both individual and/or a group of people. And it's totally free of cost.
                         </n-descriptions-item>
-                        <n-descriptions-item :span="2">
+                        <n-descriptions-item>
                             <template #label>
-                                <strong>Scope of uses</strong>
+                                <strong>Individual</strong>
                             </template>
-                            Personal — With this application you can keep track of your all personal incomes, expenses and debts.
-                            <br/>
-                            Team — With this application you can keep track of all the contributions and bills for a team or a group of people.
+                            Individual — With this application you can keep track of your all individual incomes, expenses and debts.
+                        </n-descriptions-item>
+                        <n-descriptions-item>
+                            <template #label>
+                                <strong>Group</strong>
+                            </template>
+                            With this application you can keep track of all the contributions and bills for a group of people.
                         </n-descriptions-item>
                     </n-descriptions>
                     <n-divider />

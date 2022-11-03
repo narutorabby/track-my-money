@@ -2,16 +2,6 @@
     <section id="invitations">
         <n-card title="INVITATIONS">
             <n-space class="data-container" vertical>
-                <n-card name="List filters" hoverable>
-                    <n-grid x-gap="24" y-gap="12" cols="1 m:4" responsive="screen">
-                        <n-gi>
-                            <n-select placeholder="Select invitation type" size="large" v-model:value="invitationType" :options="invitationTypes" clearable />
-                        </n-gi>
-                        <n-gi>
-                            <n-button @click="getFilteredInvitations">Submit</n-button>
-                        </n-gi>
-                    </n-grid>
-                </n-card>
                 <template v-if="pageLoading">
                     <n-skeleton height="50px" />
                     <n-skeleton v-for="i in 10" :key="i" height="50px" />
@@ -114,25 +104,9 @@ export default {
         const invitations = ref([]);
         const invitation = ref();
 
-        const invitationTypes = ref([
-            {
-                label: "Sent",
-                value: "sent"
-            },
-            {
-                label: "Received",
-                value: "received"
-            },
-        ]);
-        const invitationType = ref(null);
-
         const getInvitations = () => {
             pageLoading.value = true;
-            axios.get('/api/invitation/list', {
-                params: {
-                    type: invitationType.value,
-                }
-            }).then(res => {
+            axios.get('/api/invitation/list').then(res => {
                 if (res.data.response == "success") {
                     invitations.value = res.data.data;
                 }
@@ -142,25 +116,7 @@ export default {
                 pageLoading.value = false;
             })
         };
-        const getActiveFilters = () => {
-            if(route.query.type != null){
-                invitationType.value = route.query.type;
-            }
-            getInvitations();
-        };
-        getActiveFilters();
-
-        const getFilteredInvitations = () => {
-            pageLoading.value = true;
-
-            let queryParams = {};
-            if(invitationType.value) {
-                queryParams.type = invitationType.value;
-            }
-
-            router.replace({ name: 'Invitation', query: { ...queryParams } });
-            getInvitations();
-        };
+        getInvitations();
 
         const invitationAction = (id, status) => {
             const d = dialog.success({
@@ -196,12 +152,9 @@ export default {
             pageLoading,
             invitations,
             invitation,
-            invitationTypes,
-            invitationType,
 
-            getActiveFilters,
+            getInvitations,
             invitationAction,
-            getFilteredInvitations,
         }
     },
 }
