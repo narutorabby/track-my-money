@@ -14,6 +14,15 @@ class Invitation extends Model
         'group_id', 'user_id', 'status', 'created_by', 'updated_by'
     ];
 
+    protected $appends = [
+        'received'
+    ];
+
+    public function getReceivedAttribute()
+    {
+        return $this->user_id == auth()->user()->id;
+    }
+
     public function group()
     {
         return $this->belongsTo(Group::class);

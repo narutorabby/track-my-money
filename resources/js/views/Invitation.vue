@@ -11,9 +11,9 @@
                         <thead>
                             <tr>
                                 <th>#</th>
+                                <th>Group</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Group</th>
                                 <th>Status</th>
                                 <th></th>
                             </tr>
@@ -21,9 +21,9 @@
                         <tbody>
                         <tr v-for="(invitation, index) in invitations" :key="index">
                             <td>{{ index + 1 }}</td>
+                            <td>{{ invitation.group.name }}</td>
                             <td>{{ invitation.user.name }}</td>
                             <td>{{ invitation.user.email }}</td>
-                            <td>{{ invitation.group.name }}</td>
                             <td>
                                 <n-tag :type="
                                     invitation.status == 'Accepted' ? 'success'
@@ -34,7 +34,7 @@
                             </td>
                             <td style="text-align: end;">
                                 <n-button-group v-if="invitation.status == 'Pending'">
-                                    <template v-if="invitation.user_id == userData.id">
+                                    <template v-if="invitation.received">
                                         <n-button round @click="invitationAction(invitation.id, 'Accept')">
                                             <template #icon>
                                                 <n-icon>

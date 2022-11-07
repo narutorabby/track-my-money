@@ -58,14 +58,15 @@ class DashboardController extends Controller
         if(count($largest_expenses) > 0){
             foreach ($largest_expenses as $largest_expense) {
                 $largestExpensesTitle[] = $largest_expense->title . " (" . date("d-m-Y", strtotime($largest_expense->date)) . ")";
+                $largestExpensesColors[] = getChartColor();
                 $largestExpensesAmount[] = $largest_expense->amount;
             }
             $largestExpenseChartData = [
                 'labels' => $largestExpensesTitle,
                 'datasets' => [
                     [
-                        "label" => 'Amount in taka',
-                        "backgroundColor" => getChartColor(),
+                        "label" => 'Amount',
+                        "backgroundColor" => $largestExpensesColors,
                         "data" => $largestExpensesAmount
                     ]
                 ]
@@ -111,12 +112,14 @@ class DashboardController extends Controller
         $monthly_expense_sum = [];
         for($i = 0; $i < 12; $i++){
             $months[] = Carbon::now()->subMonth($i)->format("M Y");
-            $monthly_income_sum[] = Record::where('type', "Income")->where('user_id', $user->id)
-                                        ->whereMonth('date', '=', Carbon::now()->subMonth($i)->month)
-                                        ->sum('amount');
-            $monthly_expense_sum[] = Record::where('type', "Expense")->where('user_id', $user->id)
-                                        ->whereMonth('date', '=', Carbon::now()->subMonth($i)->month)
-                                        ->sum('amount');
+            $income_sum = Record::where('type', "Income")->where('user_id', $user->id)
+                    ->whereMonth('date', '=', Carbon::now()->subMonth($i)->month)
+                    ->sum('amount');
+            $monthly_income_sum[] = round($income_sum, 2);
+            $expense_sum = Record::where('type', "Expense")->where('user_id', $user->id)
+                    ->whereMonth('date', '=', Carbon::now()->subMonth($i)->month)
+                    ->sum('amount');
+            $monthly_expense_sum[] = round($expense_sum, 2);
         }
 
         $monthly_incomes = new stdClass();

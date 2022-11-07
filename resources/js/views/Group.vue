@@ -52,7 +52,7 @@
                                     <n-button round @click="groupMembers(group.slug)">
                                         <template #icon>
                                             <n-icon>
-                                                <eye-regular />
+                                                <users />
                                             </n-icon>
                                         </template>
                                         Members
@@ -60,7 +60,7 @@
                                     <n-button round @click="groupRecords(group.slug)">
                                         <template #icon>
                                             <n-icon>
-                                                <eye-regular />
+                                                <list-ul />
                                             </n-icon>
                                         </template>
                                         Records
@@ -132,14 +132,15 @@ import { ref } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute } from "vue-router";
 import { useMessage } from "naive-ui";
-import { Plus, EyeRegular, EditRegular, Check } from "@vicons/fa";
+import { Plus, Users, EditRegular, ListUl, Check } from "@vicons/fa";
 import moment from 'moment';
 
 export default {
     components: {
         Plus,
-        EyeRegular,
+        Users,
         EditRegular,
+        ListUl,
         Check,
     },
     setup: () => {
