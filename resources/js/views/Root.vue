@@ -41,17 +41,13 @@ import { ref, computed, h } from "vue";
 import { useStore } from "vuex";
 import { useRouter, useRoute, RouterLink } from "vue-router";
 import { NIcon } from "naive-ui";
-import { HouseUser, UserTie, Users, Envelope, UserCog } from "@vicons/fa";
+import { HouseUser, UserTie, Users, Envelope, UserCog, GooglePlay } from "@vicons/fa";
 
 export default {
     setup() {
         const store = useStore();
         const router = useRouter();
         const route = useRoute();
-
-        const userData = computed(() => {
-            return store.getters.userData || null;
-        });
 
         const currentRoute = computed(() => {
             return route.name;
@@ -105,11 +101,20 @@ export default {
                 label: () => h(
                     RouterLink,
                     { to: { name: 'Profile' } },
-                    { default: () => userData.value ? userData.value.name : "User" }
+                    { default: () => "Profile" }
                 ),
                 key: "Profile",
                 icon: renderIcon(UserCog),
-            }
+            },
+            {
+                label: () => h(
+                    'a',
+                    { href: 'https://trackmymoney.xyz/', target: '_blank', rel: 'noopenner noreferrer'},
+                    'Download App'
+                ),
+                key: 'download-app',
+                icon: renderIcon(GooglePlay)
+            },
         ]);
 
         const home = () => {
@@ -117,7 +122,6 @@ export default {
         }
 
         return {
-            userData,
             currentRoute,
             activeKey,
             collapsed,
