@@ -25,7 +25,7 @@
                 </n-grid-item>
             </n-grid>
         </div>
-        <div class="get-started">
+        <div class="get-started" v-if="session == null">
             <n-space justify="center">
                 <n-card hoverable>
                     <div class="text">Get started now!</div>
@@ -119,7 +119,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { useMessage } from "naive-ui";
@@ -134,6 +134,10 @@ export default {
         const store = useStore();
         const router = useRouter();
         const message = useMessage();
+
+        const session = computed(() => {
+            return store.getters.session || null;
+        });
 
         const googleSigninLoading = ref(false);
         const formRef = ref(null);
@@ -203,6 +207,7 @@ export default {
         };
 
         return {
+            session,
             googleSigninLoading,
             formRef,
             suggestion,
