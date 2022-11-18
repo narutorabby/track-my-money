@@ -197,32 +197,32 @@
     "file": "assets/Home.b2e875e2.css",
     "src": "resources/js/views/Home.css"
   },
-  "resources/js/views/group/Records.css": {
-    "file": "assets/Records.dfe0e8ba.css",
-    "src": "resources/js/views/group/Records.css"
-  },
-  "resources/js/views/Root.css": {
-    "file": "assets/Root.287f9b7f.css",
-    "src": "resources/js/views/Root.css"
-  },
-  "resources/js/views/Group.css": {
-    "file": "assets/Group.1d60d08b.css",
-    "src": "resources/js/views/Group.css"
+  "RecordList.css": {
+    "file": "assets/RecordList.dd9a8327.css",
+    "src": "RecordList.css"
   },
   "resources/js/views/Dashboard.css": {
     "file": "assets/Dashboard.f25b3ff4.css",
     "src": "resources/js/views/Dashboard.css"
   },
-  "resources/js/views/Personal.css": {
-    "file": "assets/Personal.12c5dfed.css",
-    "src": "resources/js/views/Personal.css"
+  "resources/js/views/group/Records.css": {
+    "file": "assets/Records.dfe0e8ba.css",
+    "src": "resources/js/views/group/Records.css"
   },
-  "RecordList.css": {
-    "file": "assets/RecordList.dd9a8327.css",
-    "src": "RecordList.css"
+  "resources/js/views/Group.css": {
+    "file": "assets/Group.1d60d08b.css",
+    "src": "resources/js/views/Group.css"
   },
   "resources/js/views/Profile.css": {
     "file": "assets/Profile.e3d47fbc.css",
     "src": "resources/js/views/Profile.css"
+  },
+  "resources/js/views/Personal.css": {
+    "file": "assets/Personal.12c5dfed.css",
+    "src": "resources/js/views/Personal.css"
+  },
+  "resources/js/views/Root.css": {
+    "file": "assets/Root.287f9b7f.css",
+    "src": "resources/js/views/Root.css"
   }
 }

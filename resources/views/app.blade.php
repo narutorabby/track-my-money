@@ -8,7 +8,6 @@
 
         <title>Track My Money | The most useful income-expense tracker</title>
         @vite('resources/css/app.css')
-        @vite('resources/js/assets/styles/custom.scss')
     </head>
     <body class="antialiased">
         <div id="app"></div>
