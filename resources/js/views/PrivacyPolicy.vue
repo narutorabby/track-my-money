@@ -1,6 +1,6 @@
 <template>
-    <n-grid :x-gap="12" :cols="6" style="margin: 20px 0;">
-        <n-gi :span="4" :offset="1">
+    <n-grid :x-gap="12" cols="1 m:6" responsive="screen" style="margin: 20px 0;">
+        <n-gi span="1 m:4" offset="0 m:1">
             <n-card title="Privacy Policy" size="huge">
                 <small>Last updated: November 18, 2022</small>
                 <n-divider />
