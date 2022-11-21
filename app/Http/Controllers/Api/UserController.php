@@ -49,12 +49,14 @@ class UserController extends Controller
                 $user = new User();
                 $user->name = $userInfo->name ?? explode("@", $userInfo->email)[0];
                 $user->email = $userInfo->email;
+                $user->avatar = "first";
                 $user->google_id = $userInfo->id;
                 $user->save();
             }
             DB::commit();
             return $user;
         } catch (Exception $e) {
+            Log::info("Error", ['err' => $e]);
             DB::rollBack();
             return null;
         }
