@@ -3,6 +3,7 @@
         <n-gi :span="4" :offset="1">
             <n-card title="Privacy Policy" size="huge">
                 <small>Last updated: November 18, 2022</small>
+                <n-divider />
                 <p>
                     This Privacy Policy describes Our policies and procedures on the
                     collection, use and disclosure of Your information when You use

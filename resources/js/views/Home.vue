@@ -111,11 +111,18 @@
                             <img class="developer" src="../assets/images/developer.png" alt="Logo">
                         </n-descriptions-item>
                     </n-descriptions>
+                    <n-divider />
+                    <n-descriptions label-placement="top" :column="1">
+                        <n-descriptions-item>
+                            <template #label>
+                                <strong>Useful links</strong>
+                            </template>
+                            <a class="useful-links" href="/privacy-policy">Privacy Policy</a>
+                            <a class="useful-links" href="/terms-of-service">Terms Of Service</a>
+                        </n-descriptions-item>
+                    </n-descriptions>
                 </n-gi>
             </n-grid>
-            <div>
-                <a href="/privacy-policy">Privacy Policy</a>
-            </div>
         </div>
         <n-divider />
     </section>
@@ -278,6 +285,11 @@ export default {
         height: 80px;
         width: auto;
         margin-top: 20px;
+    }
+
+    .useful-links {
+        margin-right: 10px;
+        margin-bottom: 10px;
     }
 }
 </style>

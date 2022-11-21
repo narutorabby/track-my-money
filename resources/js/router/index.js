@@ -62,6 +62,12 @@ const routes = [{
             import ('../views/PrivacyPolicy.vue'),
     },
     {
+        path: '/terms-of-service',
+        name: 'TermsOfService',
+        component: () =>
+            import ('../views/TermsOfService.vue'),
+    },
+    {
         path: "/:pathMatch(.*)*",
         name: "NotFound",
         component: () =>
@@ -78,7 +84,7 @@ router.beforeEach((to, from, next) => {
     var sessionToken = store.getters.session;
     window.axios.defaults.headers.common['Authorization'] = sessionToken ? "Bearer " + sessionToken : "";
 
-    if (to.name != 'Home' && to.name != 'PrivacyPolicy' && to.name != 'NotFound') {
+    if (to.name != 'Home' && to.name != 'PrivacyPolicy' && to.name != 'TermsOfService' && to.name != 'NotFound') {
         if (sessionToken) {
             if (store.getters.userData == null) {
                 store.dispatch("setUserData");
