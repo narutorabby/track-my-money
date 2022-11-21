@@ -113,6 +113,9 @@
                     </n-descriptions>
                 </n-gi>
             </n-grid>
+            <div>
+                <a href="/privacy-policy">Privacy Policy</a>
+            </div>
         </div>
         <n-divider />
     </section>
