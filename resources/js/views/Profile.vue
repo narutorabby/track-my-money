@@ -79,7 +79,7 @@
                                 :key="index"
                                 :size="64"
                                 :round="avatar.value == profile.avatar"
-                                :src="'http://track-my-money.xyz/avatar/' + avatar.src"
+                                :src="'/avatar/' + avatar.src"
                                 @click="changeAvatar(avatar)"
                             />
                         </n-space>
