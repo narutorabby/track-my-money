@@ -177,7 +177,6 @@ export default {
                 pageLoading.value = false;
             })
             .catch((err) => {
-                console.log(err);
                 pageLoading.value = false;
                 message.error("Could not fetch profile information");
             });

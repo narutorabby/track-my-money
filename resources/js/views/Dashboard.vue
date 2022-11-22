@@ -13,13 +13,15 @@
                 <n-gi>
                     <n-card title="Top 5 largest expenses">
                         <n-skeleton height="250px" v-if="largestExLoading" />
-                        <Pie :chart-data="largestExData" :chart-options="pieChartOptions" :height="50" v-else />
+                        <Pie :chart-data="largestExData" :chart-options="pieChartOptions" :height="50" v-else-if="largestExLoaded" />
+                        <n-empty class="empty" description="No expenses found" v-else />
                     </n-card>
                 </n-gi>
                 <n-gi>
                     <n-card title="Group expenses">
                         <n-skeleton height="250px" v-if="groupExLoading" />
-                        <Pie :chart-data="groupExData" :chart-options="pieChartOptions" :height="80" v-else />
+                        <Pie :chart-data="groupExData" :chart-options="pieChartOptions" :height="80" v-else-if="groupExLoaded" />
+                        <n-empty class="empty" description="No expenses found" v-else />
                     </n-card>
                 </n-gi>
             </n-grid>
@@ -54,7 +56,9 @@ export default {
 
         const dailyInExLoading = ref(true);
         const largestExLoading = ref(true);
+        const largestExLoaded = ref(false);
         const groupExLoading = ref(true);
+        const groupExLoaded = ref(false);
         const monthlyInExLoading = ref(true);
 
         const dailyInExData = ref();
@@ -100,7 +104,10 @@ export default {
         const getLargestExData = () => {
             axios.get('/api/dashboard/largest-expense').then(res => {
                 if (res.data.response == "success") {
-                    largestExData.value = res.data.data;
+                    if(res.data.data) {
+                        largestExData.value = res.data.data;
+                        largestExLoaded.value = true;
+                    }
                     largestExLoading.value = false;
                 }
                 else{
@@ -112,7 +119,10 @@ export default {
         const getGroupExData = () => {
             axios.get('/api/dashboard/group-expense').then(res => {
                 if (res.data.response == "success") {
-                    groupExData.value = res.data.data;
+                    if(res.data.data) {
+                        groupExData.value = res.data.data;
+                        groupExLoaded.value = true;
+                    }
                     groupExLoading.value = false;
                 }
                 else{
@@ -138,7 +148,9 @@ export default {
             dailyInExLoading,
             monthlyInExLoading,
             largestExLoading,
+            largestExLoaded,
             groupExLoading,
+            groupExLoaded,
 
             dailyInExData,
             largestExData,
