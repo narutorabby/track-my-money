@@ -169,7 +169,7 @@ export default {
                 if (res.data.response == "success") {
                     profile.value.email = res.data.data.email;
                     profile.value.name = res.data.data.name;
-                    profile.value.mobile = res.data.data.mobile.substring(4);
+                    profile.value.mobile = res.data.data.mobile ? res.data.data.mobile.substring(4) : "-";
                     profile.value.avatar = res.data.data.avatar;
                 } else {
                     message.error(res.data.message);
@@ -177,6 +177,7 @@ export default {
                 pageLoading.value = false;
             })
             .catch((err) => {
+                console.log(err);
                 pageLoading.value = false;
                 message.error("Could not fetch profile information");
             });
