@@ -18,6 +18,7 @@ return new class extends Migration
             $table->integer('group_id');
             $table->integer('user_id');
             $table->date('joined_at');
+            $table->timestamps();
         });
     }
 
