@@ -12,6 +12,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class InvitationController extends Controller
 {
@@ -76,6 +77,7 @@ class InvitationController extends Controller
             }
         } catch (Exception $e) {
             DB::rollback();
+            Log::error("Invitation", ['e' => $e]);
             return errorResponse("Invitation could not be sent!");
         }
     }
@@ -126,6 +128,7 @@ class InvitationController extends Controller
 
         } catch (Exception $e) {
             DB::rollBack();
+            Log::error("Invitation $status", ['e' => $e]);
             return errorResponse("Invitation could not be " . strtolower($status) . "!");
         }
     }

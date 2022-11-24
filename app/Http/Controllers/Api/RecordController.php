@@ -123,8 +123,8 @@ class RecordController extends Controller
             DB::commit();
             return successResponse("Record created successfully!", $record);
         } catch (Exception $e) {
-            Log::info("Error", ['err' => $e]);
             DB::rollBack();
+            Log::error("Create record", ['e' => $e]);
             return errorResponse("Could not create record!");
         }
     }
@@ -191,6 +191,7 @@ class RecordController extends Controller
             return successResponse("Record updated successfully!", $record);
         } catch (Exception $e) {
             DB::rollBack();
+            Log::error("Update record", ['e' => $e]);
             return errorResponse("Could not update record!");
         }
     }

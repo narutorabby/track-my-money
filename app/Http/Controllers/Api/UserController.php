@@ -56,8 +56,8 @@ class UserController extends Controller
             DB::commit();
             return $user;
         } catch (Exception $e) {
-            Log::info("Error", ['err' => $e]);
             DB::rollBack();
+            Log::info("Find Or Create User", ['err' => $e]);
             return null;
         }
     }

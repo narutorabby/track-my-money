@@ -9,6 +9,7 @@ use App\Models\GroupUser;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class GroupController extends Controller
@@ -51,6 +52,7 @@ class GroupController extends Controller
             return successResponse("Group created successfully!");
         } catch (Exception $e) {
             DB::rollBack();
+            Log::error("Group create", ['e' => $e]);
             return errorResponse("Could not create group!");
         }
     }
@@ -70,6 +72,7 @@ class GroupController extends Controller
             return successResponse("Group updated successfully!");
         } catch (Exception $e) {
             DB::rollBack();
+            Log::error("Group update", ['e' => $e]);
             return errorResponse("Could not update group!");
         }
     }
