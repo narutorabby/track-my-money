@@ -19,7 +19,7 @@ class InvitationController extends Controller
     public function list(Request $request)
     {
         $type = $request->type ?? null;
-        $invitations = Invitation::with('group', 'user');
+        $invitations = Invitation::with('group.admin', 'user');
         if($type == "sent") {
             $groupIds = Group::where('created_by', $request->user()->id)->pluck('id')->toArray();
             $invitations = $invitations->whereIn('group_id', $groupIds);
