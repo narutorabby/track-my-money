@@ -29,20 +29,14 @@
             <n-space justify="center">
                 <n-card hoverable>
                     <div class="text">Get started now!</div>
-                    <n-button
-                        class="google-button"
-                        size="large"
-                        type="info"
-                        @click="googleSignin"
-                        :loading="googleSigninLoading"
-                    >
-                        <template #icon>
-                            <n-icon>
-                                <google />
-                            </n-icon>
-                        </template>
-                        Continue with Google
-                    </n-button>
+                    <div class="google-button-container">
+                        <img
+                            class="google-button"
+                            src="../assets/images/btn_google_signin_dark.png"
+                            alt="Google button"
+                            @click="googleSignin"
+                        >
+                    </div>
                 </n-card>
             </n-space>
         </div>
@@ -265,8 +259,13 @@ export default {
         margin-bottom: 10px;
     }
 }
+.google-button-container {
+    text-align: center;
+    margin-bottom: 5px;
+}
 .google-button {
-    padding: 35px 40px;
+    cursor: pointer;
+    width: 80%;
 }
 .landing-bottom {
     padding: 0 20px 30px 20px;
