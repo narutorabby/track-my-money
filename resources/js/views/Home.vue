@@ -37,6 +37,17 @@
                             @click="googleSignin"
                         >
                     </div>
+                    <n-divider>OR</n-divider>
+                    <div class="download-button-container">
+                        <n-button type="info" size="large" @click="downloadApp">
+                            <template #icon>
+                                <n-icon>
+                                    <google-play />
+                                </n-icon>
+                            </template>
+                            Download from PlayStore
+                        </n-button>
+                    </div>
                 </n-card>
             </n-space>
         </div>
@@ -127,12 +138,13 @@ import { ref, computed } from "vue";
 import { useStore } from "vuex";
 import { useRouter } from "vue-router";
 import { useMessage } from "naive-ui";
-import { Google } from '@vicons/fa'
+import { Google, GooglePlay } from '@vicons/fa'
 import { googleTokenLogin } from "vue3-google-login"
 
 export default {
     components: {
-        Google
+        Google,
+        GooglePlay
     },
     setup() {
         const store = useStore();
@@ -198,9 +210,12 @@ export default {
             })
         };
 
+        const downloadApp = () => {
+            window.open('https://play.google.com/store/apps/details?id=xyz.trackmymoney.trackmymoney', '_blank');
+        };
+
         const submitSuggestion = (e) => {
             e.preventDefault();
-            console.log(formRef.value);
             formRef.value.validate((errors) => {
                 if (!errors) {
                     message.success("Thanks for your valuable opinion!");
@@ -218,6 +233,7 @@ export default {
             rules,
 
             googleSignin,
+            downloadApp,
             submitSuggestion,
         }
     },
@@ -266,6 +282,10 @@ export default {
 .google-button {
     cursor: pointer;
     width: 80%;
+}
+.download-button-container {
+    text-align: center;
+    margin-bottom: 5px;
 }
 .landing-bottom {
     padding: 0 20px 30px 20px;

@@ -109,7 +109,7 @@ export default {
             {
                 label: () => h(
                     'a',
-                    { href: 'https://trackmymoney.xyz/', target: '_blank', rel: 'noopenner noreferrer'},
+                    { href: 'https://play.google.com/store/apps/details?id=xyz.trackmymoney.trackmymoney', target: '_blank', rel: 'noopenner noreferrer'},
                     'Download App'
                 ),
                 key: 'download-app',
